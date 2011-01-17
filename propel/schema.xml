@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="wrap">
+  <table name="RaidPeriod">
+    <column name="idRaidPeriod" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="status" type="VARCHAR" size="45"/>
+    <column name="analysed" type="BOOLEAN"/>
+  </table>
+  <table name="Raid">
+    <column name="idRaid" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="date" type="VARCHAR" size="45"/>
+    <column name="RaidPeriod_idRaidPeriod" type="INTEGER" required="true"/>
+    <column name="status" type="VARCHAR" size="45"/>
+    <column name="comment" type="LONGVARCHAR"/>
+    <column name="analysed" type="BOOLEAN"/>
+    <foreign-key name="fk_Raid_RaidPeriod1" foreignTable="RaidPeriod">
+      <reference local="RaidPeriod_idRaidPeriod" foreign="idRaidPeriod"/>
+    </foreign-key>
+    <index name="fk_Raid_RaidPeriod1">
+      <index-column name="RaidPeriod_idRaidPeriod"/>
+    </index>
+  </table>
+  <table name="Player">
+    <column name="idPlayer" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="playerName" type="VARCHAR" size="100"/>
+    <column name="tokenCount" type="INTEGER"/>
+    <column name="goldTokenCount" type="INTEGER"/>
+    <column name="status" type="VARCHAR" size="45"/>
+  </table>
+  <table name="Loot">
+    <column name="idLoot" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="Raid_idRaid" type="INTEGER" required="true"/>
+    <column name="Player_idPlayer" type="INTEGER" required="true"/>
+    <column name="lootName" type="VARCHAR" size="200"/>
+    <column name="comment" type="LONGVARCHAR"/>
+    <column name="ilvl" type="INTEGER"/>
+    <foreign-key name="fk_Loot_Raid1" foreignTable="Raid">
+      <reference local="Raid_idRaid" foreign="idRaid"/>
+    </foreign-key>
+    <foreign-key name="fk_Loot_Player1" foreignTable="Player">
+      <reference local="Player_idPlayer" foreign="idPlayer"/>
+    </foreign-key>
+    <index name="fk_Loot_Raid1">
+      <index-column name="Raid_idRaid"/>
+    </index>
+    <index name="fk_Loot_Player1">
+      <index-column name="Player_idPlayer"/>
+    </index>
+  </table>
+  <table name="Buff">
+    <column name="idBuff" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="icon" type="VARCHAR" size="1000"/>
+    <column name="text" type="VARCHAR" size="100"/>
+  </table>
+  <table name="PlayerSpecialization">
+    <column name="idPlayerSpecialization" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="Player_idPlayer" type="INTEGER" required="true"/>
+    <column name="specializationName" type="VARCHAR" size="45"/>
+    <column name="role" type="VARCHAR" size="45"/>
+    <foreign-key name="fk_PlayerSpecialization_Player1" foreignTable="Player">
+      <reference local="Player_idPlayer" foreign="idPlayer"/>
+    </foreign-key>
+    <index name="fk_PlayerSpecialization_Player1">
+      <index-column name="Player_idPlayer"/>
+    </index>
+  </table>
+  <table name="Raid_has_Player">
+    <column name="Raid_idRaid" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="Player_idPlayer" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="status" type="VARCHAR" size="45"/>
+    <column name="inscription" type="INTEGER"/>
+    <foreign-key name="fk_Raid_has_Player_Raid" foreignTable="Raid">
+      <reference local="Raid_idRaid" foreign="idRaid"/>
+    </foreign-key>
+    <foreign-key name="fk_Raid_has_Player_Player1" foreignTable="Player">
+      <reference local="Player_idPlayer" foreign="idPlayer"/>
+    </foreign-key>
+    <index name="fk_Raid_has_Player_Player1">
+      <index-column name="Player_idPlayer"/>
+    </index>
+    <index name="fk_Raid_has_Player_Raid">
+      <index-column name="Raid_idRaid"/>
+    </index>
+  </table>
+  <table name="PlayerSpecialization_has_Buff">
+    <column name="PlayerSpecialization_idPlayerSpecialization" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="Buff_idBuff" type="INTEGER" primaryKey="true" required="true"/>
+    <foreign-key name="fk_PlayerSpecialization_has_Buff_PlayerSpecialization1" foreignTable="PlayerSpecialization">
+      <reference local="PlayerSpecialization_idPlayerSpecialization" foreign="idPlayerSpecialization"/>
+    </foreign-key>
+    <foreign-key name="fk_PlayerSpecialization_has_Buff_Buff1" foreignTable="Buff">
+      <reference local="Buff_idBuff" foreign="idBuff"/>
+    </foreign-key>
+    <index name="fk_PlayerSpecialization_has_Buff_Buff1">
+      <index-column name="Buff_idBuff"/>
+    </index>
+    <index name="fk_PlayerSpecialization_has_Buff_PlayerSpecialization1">
+      <index-column name="PlayerSpecialization_idPlayerSpecialization"/>
+    </index>
+  </table>
+</database>
+

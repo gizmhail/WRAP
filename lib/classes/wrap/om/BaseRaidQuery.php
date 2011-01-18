@@ -11,6 +11,8 @@
  * @method     RaidQuery orderByRaidperiodIdraidperiod($order = Criteria::ASC) Order by the RaidPeriod_idRaidPeriod column
  * @method     RaidQuery orderByStatus($order = Criteria::ASC) Order by the status column
  * @method     RaidQuery orderByComment($order = Criteria::ASC) Order by the comment column
+ * @method     RaidQuery orderByLocation($order = Criteria::ASC) Order by the location column
+ * @method     RaidQuery orderByArmoryid($order = Criteria::ASC) Order by the armoryId column
  * @method     RaidQuery orderByAnalysed($order = Criteria::ASC) Order by the analysed column
  *
  * @method     RaidQuery groupByIdraid() Group by the idRaid column
@@ -18,6 +20,8 @@
  * @method     RaidQuery groupByRaidperiodIdraidperiod() Group by the RaidPeriod_idRaidPeriod column
  * @method     RaidQuery groupByStatus() Group by the status column
  * @method     RaidQuery groupByComment() Group by the comment column
+ * @method     RaidQuery groupByLocation() Group by the location column
+ * @method     RaidQuery groupByArmoryid() Group by the armoryId column
  * @method     RaidQuery groupByAnalysed() Group by the analysed column
  *
  * @method     RaidQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -40,17 +44,21 @@
  * @method     Raid findOneOrCreate(PropelPDO $con = null) Return the first Raid matching the query, or a new Raid object populated from the query conditions when no match is found
  *
  * @method     Raid findOneByIdraid(int $idRaid) Return the first Raid filtered by the idRaid column
- * @method     Raid findOneByDate(string $date) Return the first Raid filtered by the date column
+ * @method     Raid findOneByDate(int $date) Return the first Raid filtered by the date column
  * @method     Raid findOneByRaidperiodIdraidperiod(int $RaidPeriod_idRaidPeriod) Return the first Raid filtered by the RaidPeriod_idRaidPeriod column
  * @method     Raid findOneByStatus(string $status) Return the first Raid filtered by the status column
  * @method     Raid findOneByComment(string $comment) Return the first Raid filtered by the comment column
+ * @method     Raid findOneByLocation(string $location) Return the first Raid filtered by the location column
+ * @method     Raid findOneByArmoryid(string $armoryId) Return the first Raid filtered by the armoryId column
  * @method     Raid findOneByAnalysed(boolean $analysed) Return the first Raid filtered by the analysed column
  *
  * @method     array findByIdraid(int $idRaid) Return Raid objects filtered by the idRaid column
- * @method     array findByDate(string $date) Return Raid objects filtered by the date column
+ * @method     array findByDate(int $date) Return Raid objects filtered by the date column
  * @method     array findByRaidperiodIdraidperiod(int $RaidPeriod_idRaidPeriod) Return Raid objects filtered by the RaidPeriod_idRaidPeriod column
  * @method     array findByStatus(string $status) Return Raid objects filtered by the status column
  * @method     array findByComment(string $comment) Return Raid objects filtered by the comment column
+ * @method     array findByLocation(string $location) Return Raid objects filtered by the location column
+ * @method     array findByArmoryid(string $armoryId) Return Raid objects filtered by the armoryId column
  * @method     array findByAnalysed(boolean $analysed) Return Raid objects filtered by the analysed column
  *
  * @package    propel.generator.wrap.om
@@ -181,20 +189,29 @@ abstract class BaseRaidQuery extends ModelCriteria
 	/**
 	 * Filter the query on the date column
 	 * 
-	 * @param     string $date The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     int|array $date The value to use as filter.
+	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    RaidQuery The current query, for fluid interface
 	 */
 	public function filterByDate($date = null, $comparison = null)
 	{
-		if (null === $comparison) {
-			if (is_array($date)) {
+		if (is_array($date)) {
+			$useMinMax = false;
+			if (isset($date['min'])) {
+				$this->addUsingAlias(RaidPeer::DATE, $date['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
+			}
+			if (isset($date['max'])) {
+				$this->addUsingAlias(RaidPeer::DATE, $date['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
 				$comparison = Criteria::IN;
-			} elseif (preg_match('/[\%\*]/', $date)) {
-				$date = str_replace('*', '%', $date);
-				$comparison = Criteria::LIKE;
 			}
 		}
 		return $this->addUsingAlias(RaidPeer::DATE, $date, $comparison);
@@ -273,6 +290,50 @@ abstract class BaseRaidQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(RaidPeer::COMMENT, $comment, $comparison);
+	}
+
+	/**
+	 * Filter the query on the location column
+	 * 
+	 * @param     string $location The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    RaidQuery The current query, for fluid interface
+	 */
+	public function filterByLocation($location = null, $comparison = null)
+	{
+		if (null === $comparison) {
+			if (is_array($location)) {
+				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $location)) {
+				$location = str_replace('*', '%', $location);
+				$comparison = Criteria::LIKE;
+			}
+		}
+		return $this->addUsingAlias(RaidPeer::LOCATION, $location, $comparison);
+	}
+
+	/**
+	 * Filter the query on the armoryId column
+	 * 
+	 * @param     string $armoryid The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    RaidQuery The current query, for fluid interface
+	 */
+	public function filterByArmoryid($armoryid = null, $comparison = null)
+	{
+		if (null === $comparison) {
+			if (is_array($armoryid)) {
+				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $armoryid)) {
+				$armoryid = str_replace('*', '%', $armoryid);
+				$comparison = Criteria::LIKE;
+			}
+		}
+		return $this->addUsingAlias(RaidPeer::ARMORYID, $armoryid, $comparison);
 	}
 
 	/**

@@ -55,6 +55,18 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	protected $status;
 
 	/**
+	 * The value for the info field.
+	 * @var        string
+	 */
+	protected $info;
+
+	/**
+	 * The value for the lastscan field.
+	 * @var        int
+	 */
+	protected $lastscan;
+
+	/**
 	 * @var        array Loot[] Collection to store aggregation of Loot objects.
 	 */
 	protected $collLoots;
@@ -131,6 +143,26 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	public function getStatus()
 	{
 		return $this->status;
+	}
+
+	/**
+	 * Get the [info] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getInfo()
+	{
+		return $this->info;
+	}
+
+	/**
+	 * Get the [lastscan] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getLastscan()
+	{
+		return $this->lastscan;
 	}
 
 	/**
@@ -234,6 +266,46 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	} // setStatus()
 
 	/**
+	 * Set the value of [info] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Player The current object (for fluent API support)
+	 */
+	public function setInfo($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->info !== $v) {
+			$this->info = $v;
+			$this->modifiedColumns[] = PlayerPeer::INFO;
+		}
+
+		return $this;
+	} // setInfo()
+
+	/**
+	 * Set the value of [lastscan] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Player The current object (for fluent API support)
+	 */
+	public function setLastscan($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->lastscan !== $v) {
+			$this->lastscan = $v;
+			$this->modifiedColumns[] = PlayerPeer::LASTSCAN;
+		}
+
+		return $this;
+	} // setLastscan()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -270,6 +342,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			$this->tokencount = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
 			$this->goldtokencount = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
 			$this->status = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->info = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->lastscan = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -278,7 +352,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 5; // 5 = PlayerPeer::NUM_COLUMNS - PlayerPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = PlayerPeer::NUM_COLUMNS - PlayerPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Player object", $e);
@@ -646,6 +720,12 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			case 4:
 				return $this->getStatus();
 				break;
+			case 5:
+				return $this->getInfo();
+				break;
+			case 6:
+				return $this->getLastscan();
+				break;
 			default:
 				return null;
 				break;
@@ -674,6 +754,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			$keys[2] => $this->getTokencount(),
 			$keys[3] => $this->getGoldtokencount(),
 			$keys[4] => $this->getStatus(),
+			$keys[5] => $this->getInfo(),
+			$keys[6] => $this->getLastscan(),
 		);
 		return $result;
 	}
@@ -720,6 +802,12 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			case 4:
 				$this->setStatus($value);
 				break;
+			case 5:
+				$this->setInfo($value);
+				break;
+			case 6:
+				$this->setLastscan($value);
+				break;
 		} // switch()
 	}
 
@@ -749,6 +837,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		if (array_key_exists($keys[2], $arr)) $this->setTokencount($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setGoldtokencount($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setStatus($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setInfo($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setLastscan($arr[$keys[6]]);
 	}
 
 	/**
@@ -765,6 +855,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		if ($this->isColumnModified(PlayerPeer::TOKENCOUNT)) $criteria->add(PlayerPeer::TOKENCOUNT, $this->tokencount);
 		if ($this->isColumnModified(PlayerPeer::GOLDTOKENCOUNT)) $criteria->add(PlayerPeer::GOLDTOKENCOUNT, $this->goldtokencount);
 		if ($this->isColumnModified(PlayerPeer::STATUS)) $criteria->add(PlayerPeer::STATUS, $this->status);
+		if ($this->isColumnModified(PlayerPeer::INFO)) $criteria->add(PlayerPeer::INFO, $this->info);
+		if ($this->isColumnModified(PlayerPeer::LASTSCAN)) $criteria->add(PlayerPeer::LASTSCAN, $this->lastscan);
 
 		return $criteria;
 	}
@@ -830,6 +922,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		$copyObj->setTokencount($this->tokencount);
 		$copyObj->setGoldtokencount($this->goldtokencount);
 		$copyObj->setStatus($this->status);
+		$copyObj->setInfo($this->info);
+		$copyObj->setLastscan($this->lastscan);
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -1286,6 +1380,8 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		$this->tokencount = null;
 		$this->goldtokencount = null;
 		$this->status = null;
+		$this->info = null;
+		$this->lastscan = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();

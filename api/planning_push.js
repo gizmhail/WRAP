@@ -1,3 +1,4 @@
+
 if(!window.location.href.match(/https:\/\/eu.battle.net\/wow\/fr\/vault\/character\/event/)){
 	window.location.href = "https://eu.battle.net/wow/fr/vault/character/event";
 }
@@ -8,6 +9,8 @@ $('.event-summary').each(function(index){
 		sendRaidPresence(raidId);
 	});
 });
+
+window.setTimeout("window.location.href=wrapBaseUrl+'/api/armory_planning_analisys.php'",5000);
 
 function sendRaidPresence(raidId){
 	var infoUrl = 'https://eu.battle.net/wow/fr/vault/character/event/details?eventId='+raidId;

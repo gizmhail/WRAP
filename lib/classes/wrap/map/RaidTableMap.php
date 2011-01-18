@@ -38,10 +38,12 @@ class RaidTableMap extends TableMap {
 		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('IDRAID', 'Idraid', 'INTEGER', true, null, null);
-		$this->addColumn('DATE', 'Date', 'VARCHAR', false, 45, null);
+		$this->addColumn('DATE', 'Date', 'INTEGER', false, null, null);
 		$this->addForeignKey('RAIDPERIOD_IDRAIDPERIOD', 'RaidperiodIdraidperiod', 'INTEGER', 'RaidPeriod', 'IDRAIDPERIOD', true, null, null);
 		$this->addColumn('STATUS', 'Status', 'VARCHAR', false, 45, null);
 		$this->addColumn('COMMENT', 'Comment', 'LONGVARCHAR', false, null, null);
+		$this->addColumn('LOCATION', 'Location', 'VARCHAR', false, 100, null);
+		$this->addColumn('ARMORYID', 'Armoryid', 'VARCHAR', false, 45, null);
 		$this->addColumn('ANALYSED', 'Analysed', 'BOOLEAN', false, null, null);
 		// validators
 	} // initialize()

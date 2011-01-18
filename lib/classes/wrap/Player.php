@@ -14,5 +14,11 @@
  * @package    propel.generator.wrap
  */
 class Player extends BasePlayer {
+	function initTokens(){
+		//TODO Use rules
+		global $wrapRules;
+		$this->setTokenCount($wrapRules['raidStartTokens']);
+		$this->setGoldTokenCount($wrapRules['raidStartGoldTokens']);
+	}
 
 } // Player

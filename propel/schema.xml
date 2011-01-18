@@ -7,10 +7,12 @@
   </table>
   <table name="Raid">
     <column name="idRaid" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
-    <column name="date" type="VARCHAR" size="45"/>
+    <column name="date" type="INTEGER"/>
     <column name="RaidPeriod_idRaidPeriod" type="INTEGER" required="true"/>
     <column name="status" type="VARCHAR" size="45"/>
     <column name="comment" type="LONGVARCHAR"/>
+    <column name="location" type="VARCHAR" size="100"/>
+    <column name="armoryId" type="VARCHAR" size="45"/>
     <column name="analysed" type="BOOLEAN"/>
     <foreign-key name="fk_Raid_RaidPeriod1" foreignTable="RaidPeriod">
       <reference local="RaidPeriod_idRaidPeriod" foreign="idRaidPeriod"/>
@@ -25,6 +27,8 @@
     <column name="tokenCount" type="INTEGER"/>
     <column name="goldTokenCount" type="INTEGER"/>
     <column name="status" type="VARCHAR" size="45"/>
+    <column name="info" type="LONGVARCHAR"/>
+    <column name="lastScan" type="INTEGER"/>
   </table>
   <table name="Loot">
     <column name="idLoot" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
@@ -64,10 +68,11 @@
     </index>
   </table>
   <table name="Raid_has_Player">
-    <column name="Raid_idRaid" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>
+    <column name="Raid_idRaid" type="INTEGER" primaryKey="true" required="true"/>
     <column name="Player_idPlayer" type="INTEGER" primaryKey="true" required="true"/>
     <column name="status" type="VARCHAR" size="45"/>
     <column name="inscription" type="INTEGER"/>
+    <column name="history" type="LONGVARCHAR"/>
     <foreign-key name="fk_Raid_has_Player_Raid" foreignTable="Raid">
       <reference local="Raid_idRaid" foreign="idRaid"/>
     </foreign-key>

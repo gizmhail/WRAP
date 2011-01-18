@@ -26,7 +26,7 @@ abstract class BaseRaidPeer {
 	const TM_CLASS = 'RaidTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 6;
+	const NUM_COLUMNS = 8;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -45,6 +45,12 @@ abstract class BaseRaidPeer {
 
 	/** the column name for the COMMENT field */
 	const COMMENT = 'Raid.COMMENT';
+
+	/** the column name for the LOCATION field */
+	const LOCATION = 'Raid.LOCATION';
+
+	/** the column name for the ARMORYID field */
+	const ARMORYID = 'Raid.ARMORYID';
 
 	/** the column name for the ANALYSED field */
 	const ANALYSED = 'Raid.ANALYSED';
@@ -65,12 +71,12 @@ abstract class BaseRaidPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Idraid', 'Date', 'RaidperiodIdraidperiod', 'Status', 'Comment', 'Analysed', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idraid', 'date', 'raidperiodIdraidperiod', 'status', 'comment', 'analysed', ),
-		BasePeer::TYPE_COLNAME => array (self::IDRAID, self::DATE, self::RAIDPERIOD_IDRAIDPERIOD, self::STATUS, self::COMMENT, self::ANALYSED, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDRAID', 'DATE', 'RAIDPERIOD_IDRAIDPERIOD', 'STATUS', 'COMMENT', 'ANALYSED', ),
-		BasePeer::TYPE_FIELDNAME => array ('idRaid', 'date', 'RaidPeriod_idRaidPeriod', 'status', 'comment', 'analysed', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('Idraid', 'Date', 'RaidperiodIdraidperiod', 'Status', 'Comment', 'Location', 'Armoryid', 'Analysed', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idraid', 'date', 'raidperiodIdraidperiod', 'status', 'comment', 'location', 'armoryid', 'analysed', ),
+		BasePeer::TYPE_COLNAME => array (self::IDRAID, self::DATE, self::RAIDPERIOD_IDRAIDPERIOD, self::STATUS, self::COMMENT, self::LOCATION, self::ARMORYID, self::ANALYSED, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDRAID', 'DATE', 'RAIDPERIOD_IDRAIDPERIOD', 'STATUS', 'COMMENT', 'LOCATION', 'ARMORYID', 'ANALYSED', ),
+		BasePeer::TYPE_FIELDNAME => array ('idRaid', 'date', 'RaidPeriod_idRaidPeriod', 'status', 'comment', 'location', 'armoryId', 'analysed', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -80,12 +86,12 @@ abstract class BaseRaidPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Idraid' => 0, 'Date' => 1, 'RaidperiodIdraidperiod' => 2, 'Status' => 3, 'Comment' => 4, 'Analysed' => 5, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idraid' => 0, 'date' => 1, 'raidperiodIdraidperiod' => 2, 'status' => 3, 'comment' => 4, 'analysed' => 5, ),
-		BasePeer::TYPE_COLNAME => array (self::IDRAID => 0, self::DATE => 1, self::RAIDPERIOD_IDRAIDPERIOD => 2, self::STATUS => 3, self::COMMENT => 4, self::ANALYSED => 5, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDRAID' => 0, 'DATE' => 1, 'RAIDPERIOD_IDRAIDPERIOD' => 2, 'STATUS' => 3, 'COMMENT' => 4, 'ANALYSED' => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('idRaid' => 0, 'date' => 1, 'RaidPeriod_idRaidPeriod' => 2, 'status' => 3, 'comment' => 4, 'analysed' => 5, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('Idraid' => 0, 'Date' => 1, 'RaidperiodIdraidperiod' => 2, 'Status' => 3, 'Comment' => 4, 'Location' => 5, 'Armoryid' => 6, 'Analysed' => 7, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idraid' => 0, 'date' => 1, 'raidperiodIdraidperiod' => 2, 'status' => 3, 'comment' => 4, 'location' => 5, 'armoryid' => 6, 'analysed' => 7, ),
+		BasePeer::TYPE_COLNAME => array (self::IDRAID => 0, self::DATE => 1, self::RAIDPERIOD_IDRAIDPERIOD => 2, self::STATUS => 3, self::COMMENT => 4, self::LOCATION => 5, self::ARMORYID => 6, self::ANALYSED => 7, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDRAID' => 0, 'DATE' => 1, 'RAIDPERIOD_IDRAIDPERIOD' => 2, 'STATUS' => 3, 'COMMENT' => 4, 'LOCATION' => 5, 'ARMORYID' => 6, 'ANALYSED' => 7, ),
+		BasePeer::TYPE_FIELDNAME => array ('idRaid' => 0, 'date' => 1, 'RaidPeriod_idRaidPeriod' => 2, 'status' => 3, 'comment' => 4, 'location' => 5, 'armoryId' => 6, 'analysed' => 7, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -162,6 +168,8 @@ abstract class BaseRaidPeer {
 			$criteria->addSelectColumn(RaidPeer::RAIDPERIOD_IDRAIDPERIOD);
 			$criteria->addSelectColumn(RaidPeer::STATUS);
 			$criteria->addSelectColumn(RaidPeer::COMMENT);
+			$criteria->addSelectColumn(RaidPeer::LOCATION);
+			$criteria->addSelectColumn(RaidPeer::ARMORYID);
 			$criteria->addSelectColumn(RaidPeer::ANALYSED);
 		} else {
 			$criteria->addSelectColumn($alias . '.IDRAID');
@@ -169,6 +177,8 @@ abstract class BaseRaidPeer {
 			$criteria->addSelectColumn($alias . '.RAIDPERIOD_IDRAIDPERIOD');
 			$criteria->addSelectColumn($alias . '.STATUS');
 			$criteria->addSelectColumn($alias . '.COMMENT');
+			$criteria->addSelectColumn($alias . '.LOCATION');
+			$criteria->addSelectColumn($alias . '.ARMORYID');
 			$criteria->addSelectColumn($alias . '.ANALYSED');
 		}
 	}

@@ -35,12 +35,13 @@ class RaidHasPlayerTableMap extends TableMap {
 		$this->setPhpName('RaidHasPlayer');
 		$this->setClassname('RaidHasPlayer');
 		$this->setPackage('wrap');
-		$this->setUseIdGenerator(true);
+		$this->setUseIdGenerator(false);
 		// columns
 		$this->addForeignPrimaryKey('RAID_IDRAID', 'RaidIdraid', 'INTEGER' , 'Raid', 'IDRAID', true, null, null);
 		$this->addForeignPrimaryKey('PLAYER_IDPLAYER', 'PlayerIdplayer', 'INTEGER' , 'Player', 'IDPLAYER', true, null, null);
 		$this->addColumn('STATUS', 'Status', 'VARCHAR', false, 45, null);
 		$this->addColumn('INSCRIPTION', 'Inscription', 'INTEGER', false, null, null);
+		$this->addColumn('HISTORY', 'History', 'LONGVARCHAR', false, null, null);
 		// validators
 	} // initialize()
 

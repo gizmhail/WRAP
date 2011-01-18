@@ -3,8 +3,8 @@
 //Base path
 $wrapBaseDir = dirname(__FILE__);
 
-//Language
-setlocale(LC_ALL, 'fr_FR');
+//Conf
+include_once($wrapBaseDir.'/conf.inc.php');
 
 //Include ruleset
 include_once($wrapBaseDir.'/rules.php');
@@ -20,4 +20,7 @@ Propel::init($wrapBaseDir."/lib/conf/wrap-conf.php");
 
 // Add the generated 'classes' directory to the include path
 set_include_path($wrapBaseDir."/lib/classes" . PATH_SEPARATOR . get_include_path());
+
+//Common files
+$planningCacheFile = "$wrapBaseDir/cache/planning/armoryPush.txt";
 

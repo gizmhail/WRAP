@@ -28,10 +28,12 @@ DROP TABLE IF EXISTS `Raid`;
 CREATE TABLE `Raid`
 (
 	`idRaid` INTEGER  NOT NULL AUTO_INCREMENT,
-	`date` VARCHAR(45),
+	`date` INTEGER,
 	`RaidPeriod_idRaidPeriod` INTEGER  NOT NULL,
 	`status` VARCHAR(45),
 	`comment` TEXT,
+	`location` VARCHAR(100),
+	`armoryId` VARCHAR(45),
 	`analysed` TINYINT,
 	PRIMARY KEY (`idRaid`),
 	KEY `fk_Raid_RaidPeriod1`(`RaidPeriod_idRaidPeriod`),
@@ -54,6 +56,8 @@ CREATE TABLE `Player`
 	`tokenCount` INTEGER,
 	`goldTokenCount` INTEGER,
 	`status` VARCHAR(45),
+	`info` TEXT,
+	`lastScan` INTEGER,
 	PRIMARY KEY (`idPlayer`)
 ) ENGINE=MyISAM;
 
@@ -127,10 +131,11 @@ DROP TABLE IF EXISTS `Raid_has_Player`;
 
 CREATE TABLE `Raid_has_Player`
 (
-	`Raid_idRaid` INTEGER  NOT NULL AUTO_INCREMENT,
+	`Raid_idRaid` INTEGER  NOT NULL,
 	`Player_idPlayer` INTEGER  NOT NULL,
 	`status` VARCHAR(45),
 	`inscription` INTEGER,
+	`history` TEXT,
 	PRIMARY KEY (`Raid_idRaid`,`Player_idPlayer`),
 	KEY `fk_Raid_has_Player_Player1`(`Player_idPlayer`),
 	KEY `fk_Raid_has_Player_Raid`(`Raid_idRaid`),

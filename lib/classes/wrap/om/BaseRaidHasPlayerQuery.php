@@ -10,11 +10,13 @@
  * @method     RaidHasPlayerQuery orderByPlayerIdplayer($order = Criteria::ASC) Order by the Player_idPlayer column
  * @method     RaidHasPlayerQuery orderByStatus($order = Criteria::ASC) Order by the status column
  * @method     RaidHasPlayerQuery orderByInscription($order = Criteria::ASC) Order by the inscription column
+ * @method     RaidHasPlayerQuery orderByHistory($order = Criteria::ASC) Order by the history column
  *
  * @method     RaidHasPlayerQuery groupByRaidIdraid() Group by the Raid_idRaid column
  * @method     RaidHasPlayerQuery groupByPlayerIdplayer() Group by the Player_idPlayer column
  * @method     RaidHasPlayerQuery groupByStatus() Group by the status column
  * @method     RaidHasPlayerQuery groupByInscription() Group by the inscription column
+ * @method     RaidHasPlayerQuery groupByHistory() Group by the history column
  *
  * @method     RaidHasPlayerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     RaidHasPlayerQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -35,11 +37,13 @@
  * @method     RaidHasPlayer findOneByPlayerIdplayer(int $Player_idPlayer) Return the first RaidHasPlayer filtered by the Player_idPlayer column
  * @method     RaidHasPlayer findOneByStatus(string $status) Return the first RaidHasPlayer filtered by the status column
  * @method     RaidHasPlayer findOneByInscription(int $inscription) Return the first RaidHasPlayer filtered by the inscription column
+ * @method     RaidHasPlayer findOneByHistory(string $history) Return the first RaidHasPlayer filtered by the history column
  *
  * @method     array findByRaidIdraid(int $Raid_idRaid) Return RaidHasPlayer objects filtered by the Raid_idRaid column
  * @method     array findByPlayerIdplayer(int $Player_idPlayer) Return RaidHasPlayer objects filtered by the Player_idPlayer column
  * @method     array findByStatus(string $status) Return RaidHasPlayer objects filtered by the status column
  * @method     array findByInscription(int $inscription) Return RaidHasPlayer objects filtered by the inscription column
+ * @method     array findByHistory(string $history) Return RaidHasPlayer objects filtered by the history column
  *
  * @package    propel.generator.wrap.om
  */
@@ -246,6 +250,28 @@ abstract class BaseRaidHasPlayerQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(RaidHasPlayerPeer::INSCRIPTION, $inscription, $comparison);
+	}
+
+	/**
+	 * Filter the query on the history column
+	 * 
+	 * @param     string $history The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    RaidHasPlayerQuery The current query, for fluid interface
+	 */
+	public function filterByHistory($history = null, $comparison = null)
+	{
+		if (null === $comparison) {
+			if (is_array($history)) {
+				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $history)) {
+				$history = str_replace('*', '%', $history);
+				$comparison = Criteria::LIKE;
+			}
+		}
+		return $this->addUsingAlias(RaidHasPlayerPeer::HISTORY, $history, $comparison);
 	}
 
 	/**

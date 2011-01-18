@@ -26,7 +26,7 @@ abstract class BaseRaidHasPlayerPeer {
 	const TM_CLASS = 'RaidHasPlayerTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 4;
+	const NUM_COLUMNS = 5;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -42,6 +42,9 @@ abstract class BaseRaidHasPlayerPeer {
 
 	/** the column name for the INSCRIPTION field */
 	const INSCRIPTION = 'Raid_has_Player.INSCRIPTION';
+
+	/** the column name for the HISTORY field */
+	const HISTORY = 'Raid_has_Player.HISTORY';
 
 	/**
 	 * An identiy map to hold any loaded instances of RaidHasPlayer objects.
@@ -59,12 +62,12 @@ abstract class BaseRaidHasPlayerPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('RaidIdraid', 'PlayerIdplayer', 'Status', 'Inscription', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('raidIdraid', 'playerIdplayer', 'status', 'inscription', ),
-		BasePeer::TYPE_COLNAME => array (self::RAID_IDRAID, self::PLAYER_IDPLAYER, self::STATUS, self::INSCRIPTION, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('RAID_IDRAID', 'PLAYER_IDPLAYER', 'STATUS', 'INSCRIPTION', ),
-		BasePeer::TYPE_FIELDNAME => array ('Raid_idRaid', 'Player_idPlayer', 'status', 'inscription', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('RaidIdraid', 'PlayerIdplayer', 'Status', 'Inscription', 'History', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('raidIdraid', 'playerIdplayer', 'status', 'inscription', 'history', ),
+		BasePeer::TYPE_COLNAME => array (self::RAID_IDRAID, self::PLAYER_IDPLAYER, self::STATUS, self::INSCRIPTION, self::HISTORY, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('RAID_IDRAID', 'PLAYER_IDPLAYER', 'STATUS', 'INSCRIPTION', 'HISTORY', ),
+		BasePeer::TYPE_FIELDNAME => array ('Raid_idRaid', 'Player_idPlayer', 'status', 'inscription', 'history', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -74,12 +77,12 @@ abstract class BaseRaidHasPlayerPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('RaidIdraid' => 0, 'PlayerIdplayer' => 1, 'Status' => 2, 'Inscription' => 3, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('raidIdraid' => 0, 'playerIdplayer' => 1, 'status' => 2, 'inscription' => 3, ),
-		BasePeer::TYPE_COLNAME => array (self::RAID_IDRAID => 0, self::PLAYER_IDPLAYER => 1, self::STATUS => 2, self::INSCRIPTION => 3, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('RAID_IDRAID' => 0, 'PLAYER_IDPLAYER' => 1, 'STATUS' => 2, 'INSCRIPTION' => 3, ),
-		BasePeer::TYPE_FIELDNAME => array ('Raid_idRaid' => 0, 'Player_idPlayer' => 1, 'status' => 2, 'inscription' => 3, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('RaidIdraid' => 0, 'PlayerIdplayer' => 1, 'Status' => 2, 'Inscription' => 3, 'History' => 4, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('raidIdraid' => 0, 'playerIdplayer' => 1, 'status' => 2, 'inscription' => 3, 'history' => 4, ),
+		BasePeer::TYPE_COLNAME => array (self::RAID_IDRAID => 0, self::PLAYER_IDPLAYER => 1, self::STATUS => 2, self::INSCRIPTION => 3, self::HISTORY => 4, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('RAID_IDRAID' => 0, 'PLAYER_IDPLAYER' => 1, 'STATUS' => 2, 'INSCRIPTION' => 3, 'HISTORY' => 4, ),
+		BasePeer::TYPE_FIELDNAME => array ('Raid_idRaid' => 0, 'Player_idPlayer' => 1, 'status' => 2, 'inscription' => 3, 'history' => 4, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -155,11 +158,13 @@ abstract class BaseRaidHasPlayerPeer {
 			$criteria->addSelectColumn(RaidHasPlayerPeer::PLAYER_IDPLAYER);
 			$criteria->addSelectColumn(RaidHasPlayerPeer::STATUS);
 			$criteria->addSelectColumn(RaidHasPlayerPeer::INSCRIPTION);
+			$criteria->addSelectColumn(RaidHasPlayerPeer::HISTORY);
 		} else {
 			$criteria->addSelectColumn($alias . '.RAID_IDRAID');
 			$criteria->addSelectColumn($alias . '.PLAYER_IDPLAYER');
 			$criteria->addSelectColumn($alias . '.STATUS');
 			$criteria->addSelectColumn($alias . '.INSCRIPTION');
+			$criteria->addSelectColumn($alias . '.HISTORY');
 		}
 	}
 
@@ -1124,10 +1129,6 @@ abstract class BaseRaidHasPlayerPeer {
 			$criteria = clone $values; // rename for clarity
 		} else {
 			$criteria = $values->buildCriteria(); // build Criteria from RaidHasPlayer object
-		}
-
-		if ($criteria->containsKey(RaidHasPlayerPeer::RAID_IDRAID) && $criteria->keyContainsValue(RaidHasPlayerPeer::RAID_IDRAID) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.RaidHasPlayerPeer::RAID_IDRAID.')');
 		}
 
 

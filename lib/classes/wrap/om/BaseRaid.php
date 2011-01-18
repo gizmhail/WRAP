@@ -32,7 +32,7 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 
 	/**
 	 * The value for the date field.
-	 * @var        string
+	 * @var        int
 	 */
 	protected $date;
 
@@ -53,6 +53,18 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 	 * @var        string
 	 */
 	protected $comment;
+
+	/**
+	 * The value for the location field.
+	 * @var        string
+	 */
+	protected $location;
+
+	/**
+	 * The value for the armoryid field.
+	 * @var        string
+	 */
+	protected $armoryid;
 
 	/**
 	 * The value for the analysed field.
@@ -102,7 +114,7 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 	/**
 	 * Get the [date] column value.
 	 * 
-	 * @return     string
+	 * @return     int
 	 */
 	public function getDate()
 	{
@@ -140,6 +152,26 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Get the [location] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getLocation()
+	{
+		return $this->location;
+	}
+
+	/**
+	 * Get the [armoryid] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getArmoryid()
+	{
+		return $this->armoryid;
+	}
+
+	/**
 	 * Get the [analysed] column value.
 	 * 
 	 * @return     boolean
@@ -172,13 +204,13 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 	/**
 	 * Set the value of [date] column.
 	 * 
-	 * @param      string $v new value
+	 * @param      int $v new value
 	 * @return     Raid The current object (for fluent API support)
 	 */
 	public function setDate($v)
 	{
 		if ($v !== null) {
-			$v = (string) $v;
+			$v = (int) $v;
 		}
 
 		if ($this->date !== $v) {
@@ -254,6 +286,46 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 	} // setComment()
 
 	/**
+	 * Set the value of [location] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Raid The current object (for fluent API support)
+	 */
+	public function setLocation($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->location !== $v) {
+			$this->location = $v;
+			$this->modifiedColumns[] = RaidPeer::LOCATION;
+		}
+
+		return $this;
+	} // setLocation()
+
+	/**
+	 * Set the value of [armoryid] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Raid The current object (for fluent API support)
+	 */
+	public function setArmoryid($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->armoryid !== $v) {
+			$this->armoryid = $v;
+			$this->modifiedColumns[] = RaidPeer::ARMORYID;
+		}
+
+		return $this;
+	} // setArmoryid()
+
+	/**
 	 * Set the value of [analysed] column.
 	 * 
 	 * @param      boolean $v new value
@@ -306,11 +378,13 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 		try {
 
 			$this->idraid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->date = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->date = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->raidperiod_idraidperiod = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
 			$this->status = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->comment = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->analysed = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
+			$this->location = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->armoryid = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->analysed = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -319,7 +393,7 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 6; // 6 = RaidPeer::NUM_COLUMNS - RaidPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 8; // 8 = RaidPeer::NUM_COLUMNS - RaidPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Raid object", $e);
@@ -698,6 +772,12 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 				return $this->getComment();
 				break;
 			case 5:
+				return $this->getLocation();
+				break;
+			case 6:
+				return $this->getArmoryid();
+				break;
+			case 7:
 				return $this->getAnalysed();
 				break;
 			default:
@@ -729,7 +809,9 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 			$keys[2] => $this->getRaidperiodIdraidperiod(),
 			$keys[3] => $this->getStatus(),
 			$keys[4] => $this->getComment(),
-			$keys[5] => $this->getAnalysed(),
+			$keys[5] => $this->getLocation(),
+			$keys[6] => $this->getArmoryid(),
+			$keys[7] => $this->getAnalysed(),
 		);
 		if ($includeForeignObjects) {
 			if (null !== $this->aRaidperiod) {
@@ -782,6 +864,12 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 				$this->setComment($value);
 				break;
 			case 5:
+				$this->setLocation($value);
+				break;
+			case 6:
+				$this->setArmoryid($value);
+				break;
+			case 7:
 				$this->setAnalysed($value);
 				break;
 		} // switch()
@@ -813,7 +901,9 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 		if (array_key_exists($keys[2], $arr)) $this->setRaidperiodIdraidperiod($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setStatus($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setComment($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setAnalysed($arr[$keys[5]]);
+		if (array_key_exists($keys[5], $arr)) $this->setLocation($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setArmoryid($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setAnalysed($arr[$keys[7]]);
 	}
 
 	/**
@@ -830,6 +920,8 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 		if ($this->isColumnModified(RaidPeer::RAIDPERIOD_IDRAIDPERIOD)) $criteria->add(RaidPeer::RAIDPERIOD_IDRAIDPERIOD, $this->raidperiod_idraidperiod);
 		if ($this->isColumnModified(RaidPeer::STATUS)) $criteria->add(RaidPeer::STATUS, $this->status);
 		if ($this->isColumnModified(RaidPeer::COMMENT)) $criteria->add(RaidPeer::COMMENT, $this->comment);
+		if ($this->isColumnModified(RaidPeer::LOCATION)) $criteria->add(RaidPeer::LOCATION, $this->location);
+		if ($this->isColumnModified(RaidPeer::ARMORYID)) $criteria->add(RaidPeer::ARMORYID, $this->armoryid);
 		if ($this->isColumnModified(RaidPeer::ANALYSED)) $criteria->add(RaidPeer::ANALYSED, $this->analysed);
 
 		return $criteria;
@@ -896,6 +988,8 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 		$copyObj->setRaidperiodIdraidperiod($this->raidperiod_idraidperiod);
 		$copyObj->setStatus($this->status);
 		$copyObj->setComment($this->comment);
+		$copyObj->setLocation($this->location);
+		$copyObj->setArmoryid($this->armoryid);
 		$copyObj->setAnalysed($this->analysed);
 
 		if ($deepCopy) {
@@ -1287,6 +1381,8 @@ abstract class BaseRaid extends BaseObject  implements Persistent
 		$this->raidperiod_idraidperiod = null;
 		$this->status = null;
 		$this->comment = null;
+		$this->location = null;
+		$this->armoryid = null;
 		$this->analysed = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;

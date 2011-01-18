@@ -11,12 +11,16 @@
  * @method     PlayerQuery orderByTokencount($order = Criteria::ASC) Order by the tokenCount column
  * @method     PlayerQuery orderByGoldtokencount($order = Criteria::ASC) Order by the goldTokenCount column
  * @method     PlayerQuery orderByStatus($order = Criteria::ASC) Order by the status column
+ * @method     PlayerQuery orderByInfo($order = Criteria::ASC) Order by the info column
+ * @method     PlayerQuery orderByLastscan($order = Criteria::ASC) Order by the lastScan column
  *
  * @method     PlayerQuery groupByIdplayer() Group by the idPlayer column
  * @method     PlayerQuery groupByPlayername() Group by the playerName column
  * @method     PlayerQuery groupByTokencount() Group by the tokenCount column
  * @method     PlayerQuery groupByGoldtokencount() Group by the goldTokenCount column
  * @method     PlayerQuery groupByStatus() Group by the status column
+ * @method     PlayerQuery groupByInfo() Group by the info column
+ * @method     PlayerQuery groupByLastscan() Group by the lastScan column
  *
  * @method     PlayerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     PlayerQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -42,12 +46,16 @@
  * @method     Player findOneByTokencount(int $tokenCount) Return the first Player filtered by the tokenCount column
  * @method     Player findOneByGoldtokencount(int $goldTokenCount) Return the first Player filtered by the goldTokenCount column
  * @method     Player findOneByStatus(string $status) Return the first Player filtered by the status column
+ * @method     Player findOneByInfo(string $info) Return the first Player filtered by the info column
+ * @method     Player findOneByLastscan(int $lastScan) Return the first Player filtered by the lastScan column
  *
  * @method     array findByIdplayer(int $idPlayer) Return Player objects filtered by the idPlayer column
  * @method     array findByPlayername(string $playerName) Return Player objects filtered by the playerName column
  * @method     array findByTokencount(int $tokenCount) Return Player objects filtered by the tokenCount column
  * @method     array findByGoldtokencount(int $goldTokenCount) Return Player objects filtered by the goldTokenCount column
  * @method     array findByStatus(string $status) Return Player objects filtered by the status column
+ * @method     array findByInfo(string $info) Return Player objects filtered by the info column
+ * @method     array findByLastscan(int $lastScan) Return Player objects filtered by the lastScan column
  *
  * @package    propel.generator.wrap.om
  */
@@ -278,6 +286,59 @@ abstract class BasePlayerQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(PlayerPeer::STATUS, $status, $comparison);
+	}
+
+	/**
+	 * Filter the query on the info column
+	 * 
+	 * @param     string $info The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function filterByInfo($info = null, $comparison = null)
+	{
+		if (null === $comparison) {
+			if (is_array($info)) {
+				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $info)) {
+				$info = str_replace('*', '%', $info);
+				$comparison = Criteria::LIKE;
+			}
+		}
+		return $this->addUsingAlias(PlayerPeer::INFO, $info, $comparison);
+	}
+
+	/**
+	 * Filter the query on the lastScan column
+	 * 
+	 * @param     int|array $lastscan The value to use as filter.
+	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function filterByLastscan($lastscan = null, $comparison = null)
+	{
+		if (is_array($lastscan)) {
+			$useMinMax = false;
+			if (isset($lastscan['min'])) {
+				$this->addUsingAlias(PlayerPeer::LASTSCAN, $lastscan['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
+			}
+			if (isset($lastscan['max'])) {
+				$this->addUsingAlias(PlayerPeer::LASTSCAN, $lastscan['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		}
+		return $this->addUsingAlias(PlayerPeer::LASTSCAN, $lastscan, $comparison);
 	}
 
 	/**

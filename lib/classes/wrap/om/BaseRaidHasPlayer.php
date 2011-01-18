@@ -49,6 +49,12 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 	protected $inscription;
 
 	/**
+	 * The value for the history field.
+	 * @var        string
+	 */
+	protected $history;
+
+	/**
 	 * @var        Raid
 	 */
 	protected $aRaid;
@@ -110,6 +116,16 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 	public function getInscription()
 	{
 		return $this->inscription;
+	}
+
+	/**
+	 * Get the [history] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getHistory()
+	{
+		return $this->history;
 	}
 
 	/**
@@ -201,6 +217,26 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 	} // setInscription()
 
 	/**
+	 * Set the value of [history] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     RaidHasPlayer The current object (for fluent API support)
+	 */
+	public function setHistory($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->history !== $v) {
+			$this->history = $v;
+			$this->modifiedColumns[] = RaidHasPlayerPeer::HISTORY;
+		}
+
+		return $this;
+	} // setHistory()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -236,6 +272,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 			$this->player_idplayer = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->status = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->inscription = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+			$this->history = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -244,7 +281,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = RaidHasPlayerPeer::NUM_COLUMNS - RaidHasPlayerPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 5; // 5 = RaidHasPlayerPeer::NUM_COLUMNS - RaidHasPlayerPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RaidHasPlayer object", $e);
@@ -443,21 +480,13 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 				$this->setPlayer($this->aPlayer);
 			}
 
-			if ($this->isNew() ) {
-				$this->modifiedColumns[] = RaidHasPlayerPeer::RAID_IDRAID;
-			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(RaidHasPlayerPeer::RAID_IDRAID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.RaidHasPlayerPeer::RAID_IDRAID.')');
-					}
-
 					$pk = BasePeer::doInsert($criteria, $con);
 					$affectedRows += 1;
-					$this->setRaidIdraid($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
 					$affectedRows += RaidHasPlayerPeer::doUpdate($this, $con);
@@ -600,6 +629,9 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 			case 3:
 				return $this->getInscription();
 				break;
+			case 4:
+				return $this->getHistory();
+				break;
 			default:
 				return null;
 				break;
@@ -628,6 +660,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 			$keys[1] => $this->getPlayerIdplayer(),
 			$keys[2] => $this->getStatus(),
 			$keys[3] => $this->getInscription(),
+			$keys[4] => $this->getHistory(),
 		);
 		if ($includeForeignObjects) {
 			if (null !== $this->aRaid) {
@@ -679,6 +712,9 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 			case 3:
 				$this->setInscription($value);
 				break;
+			case 4:
+				$this->setHistory($value);
+				break;
 		} // switch()
 	}
 
@@ -707,6 +743,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 		if (array_key_exists($keys[1], $arr)) $this->setPlayerIdplayer($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setStatus($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setInscription($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setHistory($arr[$keys[4]]);
 	}
 
 	/**
@@ -722,6 +759,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 		if ($this->isColumnModified(RaidHasPlayerPeer::PLAYER_IDPLAYER)) $criteria->add(RaidHasPlayerPeer::PLAYER_IDPLAYER, $this->player_idplayer);
 		if ($this->isColumnModified(RaidHasPlayerPeer::STATUS)) $criteria->add(RaidHasPlayerPeer::STATUS, $this->status);
 		if ($this->isColumnModified(RaidHasPlayerPeer::INSCRIPTION)) $criteria->add(RaidHasPlayerPeer::INSCRIPTION, $this->inscription);
+		if ($this->isColumnModified(RaidHasPlayerPeer::HISTORY)) $criteria->add(RaidHasPlayerPeer::HISTORY, $this->history);
 
 		return $criteria;
 	}
@@ -790,12 +828,13 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
+		$copyObj->setRaidIdraid($this->raid_idraid);
 		$copyObj->setPlayerIdplayer($this->player_idplayer);
 		$copyObj->setStatus($this->status);
 		$copyObj->setInscription($this->inscription);
+		$copyObj->setHistory($this->history);
 
 		$copyObj->setNew(true);
-		$copyObj->setRaidIdraid(NULL); // this is a auto-increment column, so set to default value
 	}
 
 	/**
@@ -943,6 +982,7 @@ abstract class BaseRaidHasPlayer extends BaseObject  implements Persistent
 		$this->player_idplayer = null;
 		$this->status = null;
 		$this->inscription = null;
+		$this->history = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();

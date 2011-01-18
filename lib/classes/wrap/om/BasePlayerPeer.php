@@ -26,7 +26,7 @@ abstract class BasePlayerPeer {
 	const TM_CLASS = 'PlayerTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 5;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -46,6 +46,12 @@ abstract class BasePlayerPeer {
 	/** the column name for the STATUS field */
 	const STATUS = 'Player.STATUS';
 
+	/** the column name for the INFO field */
+	const INFO = 'Player.INFO';
+
+	/** the column name for the LASTSCAN field */
+	const LASTSCAN = 'Player.LASTSCAN';
+
 	/**
 	 * An identiy map to hold any loaded instances of Player objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -62,12 +68,12 @@ abstract class BasePlayerPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Idplayer', 'Playername', 'Tokencount', 'Goldtokencount', 'Status', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer', 'playername', 'tokencount', 'goldtokencount', 'status', ),
-		BasePeer::TYPE_COLNAME => array (self::IDPLAYER, self::PLAYERNAME, self::TOKENCOUNT, self::GOLDTOKENCOUNT, self::STATUS, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER', 'PLAYERNAME', 'TOKENCOUNT', 'GOLDTOKENCOUNT', 'STATUS', ),
-		BasePeer::TYPE_FIELDNAME => array ('idPlayer', 'playerName', 'tokenCount', 'goldTokenCount', 'status', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+		BasePeer::TYPE_PHPNAME => array ('Idplayer', 'Playername', 'Tokencount', 'Goldtokencount', 'Status', 'Info', 'Lastscan', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer', 'playername', 'tokencount', 'goldtokencount', 'status', 'info', 'lastscan', ),
+		BasePeer::TYPE_COLNAME => array (self::IDPLAYER, self::PLAYERNAME, self::TOKENCOUNT, self::GOLDTOKENCOUNT, self::STATUS, self::INFO, self::LASTSCAN, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER', 'PLAYERNAME', 'TOKENCOUNT', 'GOLDTOKENCOUNT', 'STATUS', 'INFO', 'LASTSCAN', ),
+		BasePeer::TYPE_FIELDNAME => array ('idPlayer', 'playerName', 'tokenCount', 'goldTokenCount', 'status', 'info', 'lastScan', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -77,12 +83,12 @@ abstract class BasePlayerPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Idplayer' => 0, 'Playername' => 1, 'Tokencount' => 2, 'Goldtokencount' => 3, 'Status' => 4, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer' => 0, 'playername' => 1, 'tokencount' => 2, 'goldtokencount' => 3, 'status' => 4, ),
-		BasePeer::TYPE_COLNAME => array (self::IDPLAYER => 0, self::PLAYERNAME => 1, self::TOKENCOUNT => 2, self::GOLDTOKENCOUNT => 3, self::STATUS => 4, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER' => 0, 'PLAYERNAME' => 1, 'TOKENCOUNT' => 2, 'GOLDTOKENCOUNT' => 3, 'STATUS' => 4, ),
-		BasePeer::TYPE_FIELDNAME => array ('idPlayer' => 0, 'playerName' => 1, 'tokenCount' => 2, 'goldTokenCount' => 3, 'status' => 4, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+		BasePeer::TYPE_PHPNAME => array ('Idplayer' => 0, 'Playername' => 1, 'Tokencount' => 2, 'Goldtokencount' => 3, 'Status' => 4, 'Info' => 5, 'Lastscan' => 6, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer' => 0, 'playername' => 1, 'tokencount' => 2, 'goldtokencount' => 3, 'status' => 4, 'info' => 5, 'lastscan' => 6, ),
+		BasePeer::TYPE_COLNAME => array (self::IDPLAYER => 0, self::PLAYERNAME => 1, self::TOKENCOUNT => 2, self::GOLDTOKENCOUNT => 3, self::STATUS => 4, self::INFO => 5, self::LASTSCAN => 6, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER' => 0, 'PLAYERNAME' => 1, 'TOKENCOUNT' => 2, 'GOLDTOKENCOUNT' => 3, 'STATUS' => 4, 'INFO' => 5, 'LASTSCAN' => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('idPlayer' => 0, 'playerName' => 1, 'tokenCount' => 2, 'goldTokenCount' => 3, 'status' => 4, 'info' => 5, 'lastScan' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -159,12 +165,16 @@ abstract class BasePlayerPeer {
 			$criteria->addSelectColumn(PlayerPeer::TOKENCOUNT);
 			$criteria->addSelectColumn(PlayerPeer::GOLDTOKENCOUNT);
 			$criteria->addSelectColumn(PlayerPeer::STATUS);
+			$criteria->addSelectColumn(PlayerPeer::INFO);
+			$criteria->addSelectColumn(PlayerPeer::LASTSCAN);
 		} else {
 			$criteria->addSelectColumn($alias . '.IDPLAYER');
 			$criteria->addSelectColumn($alias . '.PLAYERNAME');
 			$criteria->addSelectColumn($alias . '.TOKENCOUNT');
 			$criteria->addSelectColumn($alias . '.GOLDTOKENCOUNT');
 			$criteria->addSelectColumn($alias . '.STATUS');
+			$criteria->addSelectColumn($alias . '.INFO');
+			$criteria->addSelectColumn($alias . '.LASTSCAN');
 		}
 	}
 

@@ -42,6 +42,8 @@ class PlayerTableMap extends TableMap {
 		$this->addColumn('TOKENCOUNT', 'Tokencount', 'INTEGER', false, null, null);
 		$this->addColumn('GOLDTOKENCOUNT', 'Goldtokencount', 'INTEGER', false, null, null);
 		$this->addColumn('STATUS', 'Status', 'VARCHAR', false, 45, null);
+		$this->addColumn('INFO', 'Info', 'LONGVARCHAR', false, null, null);
+		$this->addColumn('LASTSCAN', 'Lastscan', 'INTEGER', false, null, null);
 		// validators
 	} // initialize()
 

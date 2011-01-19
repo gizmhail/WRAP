@@ -17,6 +17,9 @@ foreach($planningPushes as $planningPush){
 			if($timeDiff < 3600*2){
 				//Same raid
 				$r->setArmoryid($planningPush['raidId']);
+				if($r->getStatus()== RAID_STATUS_POSSIBLE){
+					$r->setStatus(RAID_STATUS_PLANNED);
+				}
 				$r->save();
 				$raid = $r;
 			}
@@ -37,15 +40,32 @@ foreach($planningPushes as $planningPush){
 			$p->setStatus(PLAYER_STATUS_ACTIVE);
 			$p->save();
 		}
-		$i = RaidHasPlayerQuery::create()->filterByRaidIdRaid($planningPush['raidId'])->filterByPlayerIdPlayer($p->getIdPlayer())->find()->getFirst();	
+		$i = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->filterByPlayerIdPlayer($p->getIdPlayer())->find()->getFirst();	
 		if(!$i){
+			$newStatus = translateInscriptionStatus($status);
 			$i = new RaidhasPlayer();
 			$i->setPlayerIdPlayer($p->getIdPlayer());
-			$i->setRaidIdRaid($planningPush['raidId']);
-			$i->setHistory('');//TODO
-			$i->setStatus(translateInscriptionStatus($status));
+			$i->setRaidIdRaid($raid->getIdRaid());
+			$i->setHistory(time().':'.$newStatus);//TODO
+			$i->setStatus($newStatus);
 			$i->checkInscription();
 			$i->save();
+		}else{
+			//Update if not WRAP status (only armory status can be overriden by armory info)
+			$newStatus = translateInscriptionStatus($status);
+			switch($newStatus){
+				case "INSCRIPTION_STATUS_REFUSED":
+				case "INSCRIPTION_STATUS_CONFIRMED":
+				case "INSCRIPTION_STATUS_ACCEPTED":
+				case "INSCRIPTION_STATUS_UNCERTAIN":
+					if($newStatus != $i->getStatus()){
+						$i->setStatus(translateInscriptionStatus($status));
+			                        $i->checkInscription();
+						$i->setHistory($i->getHistory()." > ".time().":".$newStatus);//TODO
+	        	                	$i->save();
+					}
+					break;
+			}
 		}
 	}
 }
@@ -72,6 +92,5 @@ function translateInscriptionStatus($status){
 	}
 	return $s;
 }
-header('Content-type: text/plain; charset=UTF-8');
-echo "Done.";
+header('Location:../pages/raid_periods.php');
 

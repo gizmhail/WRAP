@@ -1,4 +1,7 @@
 
+//$('body').append('<div id="wrapinfo">test</div>');
+//return;
+//return;
 if(!window.location.href.match(/https:\/\/eu.battle.net\/wow\/fr\/vault\/character\/event/)){
 	window.location.href = "https://eu.battle.net/wow/fr/vault/character/event";
 }
@@ -17,8 +20,8 @@ function sendRaidPresence(raidId){
 	$.ajax({
 		url:infoUrl,
 		error:function(XMLHttpRequest, textStatus, errorThrown){
-			alert(textStatus);
-			alert(errorThrown);
+			alert('Unable to fetch event '+raidId+' : '+textStatus);
+			alert('Error: '+errorThrown);
 		},
 		success:function(data,textStatus, XMLHttpRequest){
 			var answers = "";

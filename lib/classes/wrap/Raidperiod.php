@@ -37,7 +37,7 @@ class Raidperiod extends BaseRaidperiod {
 			$raidDates[] = $latestRaid;
 			$raid = new Raid();
 			$raid->setDate($latestRaid);
-			$raid->setStatus(RAID_STATUS_PLANNED);
+			$raid->setStatus(RAID_STATUS_POSSIBLE);
 			$raid->setAnalysed(false);
 			$this->addRaid($raid);
 		}

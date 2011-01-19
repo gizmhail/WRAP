@@ -51,8 +51,8 @@ $periods = RaidperiodQuery::create()->find();
 			foreach($periods as $period){
 				?>
 			<tr>
-				<td><?php echo $period->getIdRaidperiod();?><input type='checkbox'<?php echo ($period->analyseAvailable())?'':'disabled="true"'?>/></td>
-				<td><?php echo date('d/m',$period->startDate());?> - <?php echo date('d/m',$period->endDate());?></td>
+				<td><input type='checkbox'<?php echo ($period->analyseAvailable())?'':'disabled="true"'?>/></td>
+				<td><a href='raid_period.php?id=<?php echo $period->getIdRaidperiod();?>'><?php echo date('d/m',$period->startDate());?> - <?php echo date('d/m',$period->endDate());?></a></td>
 				<td>
 					<?php
 					foreach($period->getRaids() as $raid){

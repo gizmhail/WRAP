@@ -24,3 +24,11 @@ set_include_path($wrapBaseDir."/lib/classes" . PATH_SEPARATOR . get_include_path
 //Common files
 $planningCacheFile = "$wrapBaseDir/cache/planning/armoryPush.txt";
 
+//Language
+$wrapLang = array();
+$wrapLanguageConfFile = "$wrapBaseDir/lang/en.inc.php";
+include_once($wrapLanguageConfFile);
+if(isset($wrapLanguage)&&!is_file("$wrapBaseDir/lang/$wrapLanguage.inc.php")){
+	$wrapLanguageConfFile = "$wrapBaseDir/lang/$wrapLanguage.inc.php";
+	include_once($wrapLanguageConfFile);
+}

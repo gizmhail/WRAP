@@ -46,6 +46,7 @@ foreach($planningPushes as $planningPush){
 			$i = new RaidhasPlayer();
 			$i->setPlayerIdPlayer($p->getIdPlayer());
 			$i->setRaidIdRaid($raid->getIdRaid());
+			$i->setInscription(0);
 			$i->setHistory(time().':'.$newStatus);//TODO
 			$i->setStatus($newStatus);
 			$i->checkInscription();
@@ -54,10 +55,10 @@ foreach($planningPushes as $planningPush){
 			//Update if not WRAP status (only armory status can be overriden by armory info)
 			$newStatus = translateInscriptionStatus($status);
 			switch($newStatus){
-				case "INSCRIPTION_STATUS_REFUSED":
-				case "INSCRIPTION_STATUS_CONFIRMED":
-				case "INSCRIPTION_STATUS_ACCEPTED":
-				case "INSCRIPTION_STATUS_UNCERTAIN":
+				case INSCRIPTION_STATUS_REFUSED:
+				case INSCRIPTION_STATUS_CONFIRMED:
+				case INSCRIPTION_STATUS_ACCEPTED:
+				case INSCRIPTION_STATUS_UNCERTAIN:
 					if($newStatus != $i->getStatus()){
 						$i->setStatus(translateInscriptionStatus($status));
 			                        $i->checkInscription();
@@ -67,6 +68,7 @@ foreach($planningPushes as $planningPush){
 					break;
 			}
 		}
+		//TODO - Major : handle uninscription (makes entry disapeear in armory)
 	}
 }
 

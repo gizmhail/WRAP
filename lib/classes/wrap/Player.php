@@ -21,4 +21,9 @@ class Player extends BasePlayer {
 		$this->setGoldTokenCount($wrapRules['raidStartGoldTokens']);
 	}
 
+	function armoryUrl(){
+		global $wowServer;
+		return "http://eu.battle.net/wow/fr/character/".strtolower($wowServer)."/".rawurlencode($this->getPlayerName())."/advanced";
+	}
+
 } // Player

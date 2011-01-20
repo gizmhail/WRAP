@@ -1,0 +1,11 @@
+
+
+___________________________________________
+TODO
+Rules ---
+Auto valid inscription on importation only up to a certian date (for instance, 2 days before event)
+Later, should be updated manually)
+Minor ---
+- add a field in database to link reroll together
+=> currently, only one main should be active and handle answers
+

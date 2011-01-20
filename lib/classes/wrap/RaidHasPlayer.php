@@ -15,11 +15,13 @@
  */
 class RaidHasPlayer extends BaseRaidHasPlayer {
 	function checkInscription(){
-		//TODO cehck if status implies inscription
+		global $wrapRules; 
 		switch($this->getStatus()){
 			case INSCRIPTION_STATUS_ACCEPTED:
 			case INSCRIPTION_STATUS_CONFIRMED:
-				$this->setInscription(1);
+				if((time()-$this->getRaid()->getDate())>$wrapRules['MinimulmDelayToAllowAutomaticInscriptionFromArmory']){
+					$this->setInscription(1);
+				}
 				break;
 			default:
 				$this->setInscription(0);

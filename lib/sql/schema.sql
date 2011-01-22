@@ -58,7 +58,12 @@ CREATE TABLE `Player`
 	`status` VARCHAR(45),
 	`info` TEXT,
 	`lastScan` INTEGER,
-	PRIMARY KEY (`idPlayer`)
+	`main_idPlayer` INTEGER  NOT NULL,
+	PRIMARY KEY (`idPlayer`),
+	KEY `fk_Player_Player1`(`main_idPlayer`),
+	CONSTRAINT `fk_Player_Player1`
+		FOREIGN KEY (`main_idPlayer`)
+		REFERENCES `Player` (`idPlayer`)
 ) ENGINE=MyISAM;
 
 #-----------------------------------------------------------------------------

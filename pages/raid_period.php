@@ -25,6 +25,7 @@ ksort($players);
                 <title>Raid period</title>
                 <link type="text/css" href="../css/smoothness/jquery-ui-1.8.8.custom.css" rel="stylesheet" />   
                 <link type="text/css" href="../css/buttons.css" rel="stylesheet" />     
+                <link type="text/css" href="../css/wrap.css" rel="stylesheet" />     
                 <script type="text/javascript" src="../js/jquery-1.4.4.min.js"></script>
                 <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
         </head>
@@ -41,12 +42,18 @@ ksort($players);
 			echo "<tr>";
 			echo "<td>".$player."</td>";
 			foreach($raidByDate as $rd=>$raid){
+				echo "<td>";
 				if(isset($inscriptions[$rd])){
 					$inscription = $inscriptions[$rd];
-					echo "<td>".$inscription->getInscription()."</td>";
+					$alt = (($inscription->getInscription())?'Inscription in time':'Inscription not in time');
+					$intimeImg = (($inscription->getInscription())?'intime.png':'notintime.png');
+					echo "<img title='".$inscription->getStatus()."' alt='".$inscription->getStatus()."' class='periodStatus' src='../images/status/".$inscription->getStatus().".png'/>";
+					if($inscription->hasPlayingStatus()) echo "<img title='$alt' alt='$alt' class='inscriptionInTime' src='../images/inscription/$intimeImg'/>";
+
 				}else{
-					echo "<td>?</td>";
+					echo "?";
 				}
+				echo "</td>";
 			}
 			echo "</tr>";
 			

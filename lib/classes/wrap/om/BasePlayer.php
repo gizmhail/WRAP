@@ -67,6 +67,22 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	protected $lastscan;
 
 	/**
+	 * The value for the main_idplayer field.
+	 * @var        int
+	 */
+	protected $main_idplayer;
+
+	/**
+	 * @var        Player
+	 */
+	protected $aPlayerRelatedByMainIdplayer;
+
+	/**
+	 * @var        array Player[] Collection to store aggregation of Player objects.
+	 */
+	protected $collPlayersRelatedByIdplayer;
+
+	/**
 	 * @var        array Loot[] Collection to store aggregation of Loot objects.
 	 */
 	protected $collLoots;
@@ -163,6 +179,16 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	public function getLastscan()
 	{
 		return $this->lastscan;
+	}
+
+	/**
+	 * Get the [main_idplayer] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getMainIdplayer()
+	{
+		return $this->main_idplayer;
 	}
 
 	/**
@@ -306,6 +332,30 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	} // setLastscan()
 
 	/**
+	 * Set the value of [main_idplayer] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Player The current object (for fluent API support)
+	 */
+	public function setMainIdplayer($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->main_idplayer !== $v) {
+			$this->main_idplayer = $v;
+			$this->modifiedColumns[] = PlayerPeer::MAIN_IDPLAYER;
+		}
+
+		if ($this->aPlayerRelatedByMainIdplayer !== null && $this->aPlayerRelatedByMainIdplayer->getIdplayer() !== $v) {
+			$this->aPlayerRelatedByMainIdplayer = null;
+		}
+
+		return $this;
+	} // setMainIdplayer()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -344,6 +394,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			$this->status = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->info = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
 			$this->lastscan = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+			$this->main_idplayer = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -352,7 +403,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 7; // 7 = PlayerPeer::NUM_COLUMNS - PlayerPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 8; // 8 = PlayerPeer::NUM_COLUMNS - PlayerPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Player object", $e);
@@ -375,6 +426,9 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aPlayerRelatedByMainIdplayer !== null && $this->main_idplayer !== $this->aPlayerRelatedByMainIdplayer->getIdplayer()) {
+			$this->aPlayerRelatedByMainIdplayer = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -413,6 +467,9 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		$this->hydrate($row, 0, true); // rehydrate
 
 		if ($deep) {  // also de-associate any related objects?
+
+			$this->aPlayerRelatedByMainIdplayer = null;
+			$this->collPlayersRelatedByIdplayer = null;
 
 			$this->collLoots = null;
 
@@ -530,6 +587,18 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aPlayerRelatedByMainIdplayer !== null) {
+				if ($this->aPlayerRelatedByMainIdplayer->isModified() || $this->aPlayerRelatedByMainIdplayer->isNew()) {
+					$affectedRows += $this->aPlayerRelatedByMainIdplayer->save($con);
+				}
+				$this->setPlayerRelatedByMainIdplayer($this->aPlayerRelatedByMainIdplayer);
+			}
+
 			if ($this->isNew() ) {
 				$this->modifiedColumns[] = PlayerPeer::IDPLAYER;
 			}
@@ -543,14 +612,22 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 					}
 
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
 					$this->setIdplayer($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = PlayerPeer::doUpdate($this, $con);
+					$affectedRows += PlayerPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collPlayersRelatedByIdplayer !== null) {
+				foreach ($this->collPlayersRelatedByIdplayer as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			if ($this->collLoots !== null) {
@@ -643,10 +720,30 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aPlayerRelatedByMainIdplayer !== null) {
+				if (!$this->aPlayerRelatedByMainIdplayer->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aPlayerRelatedByMainIdplayer->getValidationFailures());
+				}
+			}
+
+
 			if (($retval = PlayerPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collPlayersRelatedByIdplayer !== null) {
+					foreach ($this->collPlayersRelatedByIdplayer as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collLoots !== null) {
 					foreach ($this->collLoots as $referrerFK) {
@@ -726,6 +823,9 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			case 6:
 				return $this->getLastscan();
 				break;
+			case 7:
+				return $this->getMainIdplayer();
+				break;
 			default:
 				return null;
 				break;
@@ -742,10 +842,11 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
 	{
 		$keys = PlayerPeer::getFieldNames($keyType);
 		$result = array(
@@ -756,7 +857,13 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			$keys[4] => $this->getStatus(),
 			$keys[5] => $this->getInfo(),
 			$keys[6] => $this->getLastscan(),
+			$keys[7] => $this->getMainIdplayer(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aPlayerRelatedByMainIdplayer) {
+				$result['PlayerRelatedByMainIdplayer'] = $this->aPlayerRelatedByMainIdplayer->toArray($keyType, $includeLazyLoadColumns, true);
+			}
+		}
 		return $result;
 	}
 
@@ -808,6 +915,9 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			case 6:
 				$this->setLastscan($value);
 				break;
+			case 7:
+				$this->setMainIdplayer($value);
+				break;
 		} // switch()
 	}
 
@@ -839,6 +949,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		if (array_key_exists($keys[4], $arr)) $this->setStatus($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setInfo($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setLastscan($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setMainIdplayer($arr[$keys[7]]);
 	}
 
 	/**
@@ -857,6 +968,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		if ($this->isColumnModified(PlayerPeer::STATUS)) $criteria->add(PlayerPeer::STATUS, $this->status);
 		if ($this->isColumnModified(PlayerPeer::INFO)) $criteria->add(PlayerPeer::INFO, $this->info);
 		if ($this->isColumnModified(PlayerPeer::LASTSCAN)) $criteria->add(PlayerPeer::LASTSCAN, $this->lastscan);
+		if ($this->isColumnModified(PlayerPeer::MAIN_IDPLAYER)) $criteria->add(PlayerPeer::MAIN_IDPLAYER, $this->main_idplayer);
 
 		return $criteria;
 	}
@@ -924,11 +1036,18 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		$copyObj->setStatus($this->status);
 		$copyObj->setInfo($this->info);
 		$copyObj->setLastscan($this->lastscan);
+		$copyObj->setMainIdplayer($this->main_idplayer);
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
+
+			foreach ($this->getPlayersRelatedByIdplayer() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPlayerRelatedByIdplayer($relObj->copy($deepCopy));
+				}
+			}
 
 			foreach ($this->getLoots() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -991,6 +1110,164 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			self::$peer = new PlayerPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Declares an association between this object and a Player object.
+	 *
+	 * @param      Player $v
+	 * @return     Player The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setPlayerRelatedByMainIdplayer(Player $v = null)
+	{
+		if ($v === null) {
+			$this->setMainIdplayer(NULL);
+		} else {
+			$this->setMainIdplayer($v->getIdplayer());
+		}
+
+		$this->aPlayerRelatedByMainIdplayer = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Player object, it will not be re-added.
+		if ($v !== null) {
+			$v->addPlayerRelatedByIdplayer($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Player object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Player The associated Player object.
+	 * @throws     PropelException
+	 */
+	public function getPlayerRelatedByMainIdplayer(PropelPDO $con = null)
+	{
+		if ($this->aPlayerRelatedByMainIdplayer === null && ($this->main_idplayer !== null)) {
+			$this->aPlayerRelatedByMainIdplayer = PlayerQuery::create()->findPk($this->main_idplayer, $con);
+			/* The following can be used additionally to
+				 guarantee the related object contains a reference
+				 to this object.  This level of coupling may, however, be
+				 undesirable since it could result in an only partially populated collection
+				 in the referenced object.
+				 $this->aPlayerRelatedByMainIdplayer->addPlayersRelatedByIdplayer($this);
+			 */
+		}
+		return $this->aPlayerRelatedByMainIdplayer;
+	}
+
+	/**
+	 * Clears out the collPlayersRelatedByIdplayer collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPlayersRelatedByIdplayer()
+	 */
+	public function clearPlayersRelatedByIdplayer()
+	{
+		$this->collPlayersRelatedByIdplayer = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPlayersRelatedByIdplayer collection.
+	 *
+	 * By default this just sets the collPlayersRelatedByIdplayer collection to an empty array (like clearcollPlayersRelatedByIdplayer());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initPlayersRelatedByIdplayer()
+	{
+		$this->collPlayersRelatedByIdplayer = new PropelObjectCollection();
+		$this->collPlayersRelatedByIdplayer->setModel('Player');
+	}
+
+	/**
+	 * Gets an array of Player objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this Player is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array Player[] List of Player objects
+	 * @throws     PropelException
+	 */
+	public function getPlayersRelatedByIdplayer($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collPlayersRelatedByIdplayer || null !== $criteria) {
+			if ($this->isNew() && null === $this->collPlayersRelatedByIdplayer) {
+				// return empty collection
+				$this->initPlayersRelatedByIdplayer();
+			} else {
+				$collPlayersRelatedByIdplayer = PlayerQuery::create(null, $criteria)
+					->filterByPlayerRelatedByMainIdplayer($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collPlayersRelatedByIdplayer;
+				}
+				$this->collPlayersRelatedByIdplayer = $collPlayersRelatedByIdplayer;
+			}
+		}
+		return $this->collPlayersRelatedByIdplayer;
+	}
+
+	/**
+	 * Returns the number of related Player objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Player objects.
+	 * @throws     PropelException
+	 */
+	public function countPlayersRelatedByIdplayer(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collPlayersRelatedByIdplayer || null !== $criteria) {
+			if ($this->isNew() && null === $this->collPlayersRelatedByIdplayer) {
+				return 0;
+			} else {
+				$query = PlayerQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByPlayerRelatedByMainIdplayer($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collPlayersRelatedByIdplayer);
+		}
+	}
+
+	/**
+	 * Method called to associate a Player object to this object
+	 * through the Player foreign key attribute.
+	 *
+	 * @param      Player $l Player
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPlayerRelatedByIdplayer(Player $l)
+	{
+		if ($this->collPlayersRelatedByIdplayer === null) {
+			$this->initPlayersRelatedByIdplayer();
+		}
+		if (!$this->collPlayersRelatedByIdplayer->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collPlayersRelatedByIdplayer[]= $l;
+			$l->setPlayerRelatedByMainIdplayer($this);
+		}
 	}
 
 	/**
@@ -1382,6 +1659,7 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 		$this->status = null;
 		$this->info = null;
 		$this->lastscan = null;
+		$this->main_idplayer = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
@@ -1402,6 +1680,11 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collPlayersRelatedByIdplayer) {
+				foreach ((array) $this->collPlayersRelatedByIdplayer as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collLoots) {
 				foreach ((array) $this->collLoots as $o) {
 					$o->clearAllReferences($deep);
@@ -1419,9 +1702,11 @@ abstract class BasePlayer extends BaseObject  implements Persistent
 			}
 		} // if ($deep)
 
+		$this->collPlayersRelatedByIdplayer = null;
 		$this->collLoots = null;
 		$this->collPlayerspecializations = null;
 		$this->collRaidHasPlayers = null;
+		$this->aPlayerRelatedByMainIdplayer = null;
 	}
 
 	/**

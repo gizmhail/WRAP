@@ -29,6 +29,13 @@
     <column name="status" type="VARCHAR" size="45"/>
     <column name="info" type="LONGVARCHAR"/>
     <column name="lastScan" type="INTEGER"/>
+    <column name="main_idPlayer" type="INTEGER" required="true"/>
+    <foreign-key name="fk_Player_Player1" foreignTable="Player">
+      <reference local="main_idPlayer" foreign="idPlayer"/>
+    </foreign-key>
+    <index name="fk_Player_Player1">
+      <index-column name="main_idPlayer"/>
+    </index>
   </table>
   <table name="Loot">
     <column name="idLoot" type="INTEGER" primaryKey="true" required="true" autoIncrement="true"/>

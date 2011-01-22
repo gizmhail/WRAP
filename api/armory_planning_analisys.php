@@ -8,6 +8,7 @@ if(is_file($planningCacheFile)){
 }
 
 $players = array();
+$ignoreMinimumDelay = false; 
 foreach($planningPushes as $planningPush){
 	$raid = RaidQuery::create()->findByArmoryid($planningPush['raidId'])->getFirst();
 	if(!$raid){
@@ -19,12 +20,14 @@ foreach($planningPushes as $planningPush){
 				$r->setArmoryid($planningPush['raidId']);
 				if($r->getStatus()== RAID_STATUS_POSSIBLE){
 					$r->setStatus(RAID_STATUS_PLANNED);
+					$ignoreMinimumDelay = true; //We ignore minimum delays if we check for the first time the event too late
 				}
 				$r->save();
 				$raid = $r;
 			}
 		}
 	}
+	if(!$raid) continue;
 	$inscriptions = explode(";",$planningPush['data']);
 	$raidStatus = array();
 	foreach($inscriptions as $inscription){
@@ -49,7 +52,7 @@ foreach($planningPushes as $planningPush){
 			$i->setInscription(0);
 			$i->setHistory(time().':'.$newStatus);//TODO
 			$i->setStatus($newStatus);
-			$i->checkInscription();
+			$i->checkInscription($ignoreMinimumDelay);
 			$i->save();
 		}else{
 			//Update if not WRAP status (only armory status can be overriden by armory info)
@@ -59,10 +62,12 @@ foreach($planningPushes as $planningPush){
 				case INSCRIPTION_STATUS_CONFIRMED:
 				case INSCRIPTION_STATUS_ACCEPTED:
 				case INSCRIPTION_STATUS_UNCERTAIN:
+					$history = $i->parsedHistory();
 					if($newStatus != $i->getStatus()){
 						$i->setStatus(translateInscriptionStatus($status));
 			                        $i->checkInscription();
-						$i->setHistory($i->getHistory()." > ".time().":".$newStatus);//TODO
+						$history[microtime(true)] = $newStatus;
+						$i->setHistory(serialize($history));//TODO
 	        	                	$i->save();
 					}
 					break;
@@ -73,7 +78,8 @@ foreach($planningPushes as $planningPush){
 }
 
 //Reset file
-file_put_contents($planningCacheFile,serialize(array()));
+//rename($planningCacheFile,$planningCacheFile.microtime(true));
+//file_put_contents($planningCacheFile,serialize(array()));
 
 function translateInscriptionStatus($status){
 	$s = INSCRIPTION_STATUS_REFUSED;

@@ -44,6 +44,7 @@ class PlayerTableMap extends TableMap {
 		$this->addColumn('STATUS', 'Status', 'VARCHAR', false, 45, null);
 		$this->addColumn('INFO', 'Info', 'LONGVARCHAR', false, null, null);
 		$this->addColumn('LASTSCAN', 'Lastscan', 'INTEGER', false, null, null);
+		$this->addForeignKey('MAIN_IDPLAYER', 'MainIdplayer', 'INTEGER', 'Player', 'IDPLAYER', true, null, null);
 		// validators
 	} // initialize()
 
@@ -52,6 +53,8 @@ class PlayerTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('PlayerRelatedByMainIdplayer', 'Player', RelationMap::MANY_TO_ONE, array('main_idPlayer' => 'idPlayer', ), null, null);
+    $this->addRelation('PlayerRelatedByIdplayer', 'Player', RelationMap::ONE_TO_MANY, array('idPlayer' => 'main_idPlayer', ), null, null);
     $this->addRelation('Loot', 'Loot', RelationMap::ONE_TO_MANY, array('idPlayer' => 'Player_idPlayer', ), null, null);
     $this->addRelation('Playerspecialization', 'Playerspecialization', RelationMap::ONE_TO_MANY, array('idPlayer' => 'Player_idPlayer', ), null, null);
     $this->addRelation('RaidHasPlayer', 'RaidHasPlayer', RelationMap::ONE_TO_MANY, array('idPlayer' => 'Player_idPlayer', ), null, null);

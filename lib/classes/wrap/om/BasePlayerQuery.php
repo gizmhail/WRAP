@@ -13,6 +13,7 @@
  * @method     PlayerQuery orderByStatus($order = Criteria::ASC) Order by the status column
  * @method     PlayerQuery orderByInfo($order = Criteria::ASC) Order by the info column
  * @method     PlayerQuery orderByLastscan($order = Criteria::ASC) Order by the lastScan column
+ * @method     PlayerQuery orderByMainIdplayer($order = Criteria::ASC) Order by the main_idPlayer column
  *
  * @method     PlayerQuery groupByIdplayer() Group by the idPlayer column
  * @method     PlayerQuery groupByPlayername() Group by the playerName column
@@ -21,10 +22,19 @@
  * @method     PlayerQuery groupByStatus() Group by the status column
  * @method     PlayerQuery groupByInfo() Group by the info column
  * @method     PlayerQuery groupByLastscan() Group by the lastScan column
+ * @method     PlayerQuery groupByMainIdplayer() Group by the main_idPlayer column
  *
  * @method     PlayerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     PlayerQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     PlayerQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     PlayerQuery leftJoinPlayerRelatedByMainIdplayer($relationAlias = null) Adds a LEFT JOIN clause to the query using the PlayerRelatedByMainIdplayer relation
+ * @method     PlayerQuery rightJoinPlayerRelatedByMainIdplayer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PlayerRelatedByMainIdplayer relation
+ * @method     PlayerQuery innerJoinPlayerRelatedByMainIdplayer($relationAlias = null) Adds a INNER JOIN clause to the query using the PlayerRelatedByMainIdplayer relation
+ *
+ * @method     PlayerQuery leftJoinPlayerRelatedByIdplayer($relationAlias = null) Adds a LEFT JOIN clause to the query using the PlayerRelatedByIdplayer relation
+ * @method     PlayerQuery rightJoinPlayerRelatedByIdplayer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PlayerRelatedByIdplayer relation
+ * @method     PlayerQuery innerJoinPlayerRelatedByIdplayer($relationAlias = null) Adds a INNER JOIN clause to the query using the PlayerRelatedByIdplayer relation
  *
  * @method     PlayerQuery leftJoinLoot($relationAlias = null) Adds a LEFT JOIN clause to the query using the Loot relation
  * @method     PlayerQuery rightJoinLoot($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Loot relation
@@ -48,6 +58,7 @@
  * @method     Player findOneByStatus(string $status) Return the first Player filtered by the status column
  * @method     Player findOneByInfo(string $info) Return the first Player filtered by the info column
  * @method     Player findOneByLastscan(int $lastScan) Return the first Player filtered by the lastScan column
+ * @method     Player findOneByMainIdplayer(int $main_idPlayer) Return the first Player filtered by the main_idPlayer column
  *
  * @method     array findByIdplayer(int $idPlayer) Return Player objects filtered by the idPlayer column
  * @method     array findByPlayername(string $playerName) Return Player objects filtered by the playerName column
@@ -56,6 +67,7 @@
  * @method     array findByStatus(string $status) Return Player objects filtered by the status column
  * @method     array findByInfo(string $info) Return Player objects filtered by the info column
  * @method     array findByLastscan(int $lastScan) Return Player objects filtered by the lastScan column
+ * @method     array findByMainIdplayer(int $main_idPlayer) Return Player objects filtered by the main_idPlayer column
  *
  * @package    propel.generator.wrap.om
  */
@@ -339,6 +351,165 @@ abstract class BasePlayerQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(PlayerPeer::LASTSCAN, $lastscan, $comparison);
+	}
+
+	/**
+	 * Filter the query on the main_idPlayer column
+	 * 
+	 * @param     int|array $mainIdplayer The value to use as filter.
+	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function filterByMainIdplayer($mainIdplayer = null, $comparison = null)
+	{
+		if (is_array($mainIdplayer)) {
+			$useMinMax = false;
+			if (isset($mainIdplayer['min'])) {
+				$this->addUsingAlias(PlayerPeer::MAIN_IDPLAYER, $mainIdplayer['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
+			}
+			if (isset($mainIdplayer['max'])) {
+				$this->addUsingAlias(PlayerPeer::MAIN_IDPLAYER, $mainIdplayer['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		}
+		return $this->addUsingAlias(PlayerPeer::MAIN_IDPLAYER, $mainIdplayer, $comparison);
+	}
+
+	/**
+	 * Filter the query by a related Player object
+	 *
+	 * @param     Player $player  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function filterByPlayerRelatedByMainIdplayer($player, $comparison = null)
+	{
+		return $this
+			->addUsingAlias(PlayerPeer::MAIN_IDPLAYER, $player->getIdplayer(), $comparison);
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the PlayerRelatedByMainIdplayer relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function joinPlayerRelatedByMainIdplayer($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('PlayerRelatedByMainIdplayer');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'PlayerRelatedByMainIdplayer');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the PlayerRelatedByMainIdplayer relation Player object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    PlayerQuery A secondary query class using the current class as primary query
+	 */
+	public function usePlayerRelatedByMainIdplayerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinPlayerRelatedByMainIdplayer($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'PlayerRelatedByMainIdplayer', 'PlayerQuery');
+	}
+
+	/**
+	 * Filter the query by a related Player object
+	 *
+	 * @param     Player $player  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function filterByPlayerRelatedByIdplayer($player, $comparison = null)
+	{
+		return $this
+			->addUsingAlias(PlayerPeer::IDPLAYER, $player->getMainIdplayer(), $comparison);
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the PlayerRelatedByIdplayer relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    PlayerQuery The current query, for fluid interface
+	 */
+	public function joinPlayerRelatedByIdplayer($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('PlayerRelatedByIdplayer');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'PlayerRelatedByIdplayer');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the PlayerRelatedByIdplayer relation Player object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    PlayerQuery A secondary query class using the current class as primary query
+	 */
+	public function usePlayerRelatedByIdplayerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinPlayerRelatedByIdplayer($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'PlayerRelatedByIdplayer', 'PlayerQuery');
 	}
 
 	/**

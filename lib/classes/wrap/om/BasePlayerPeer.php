@@ -26,7 +26,7 @@ abstract class BasePlayerPeer {
 	const TM_CLASS = 'PlayerTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 7;
+	const NUM_COLUMNS = 8;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -52,6 +52,9 @@ abstract class BasePlayerPeer {
 	/** the column name for the LASTSCAN field */
 	const LASTSCAN = 'Player.LASTSCAN';
 
+	/** the column name for the MAIN_IDPLAYER field */
+	const MAIN_IDPLAYER = 'Player.MAIN_IDPLAYER';
+
 	/**
 	 * An identiy map to hold any loaded instances of Player objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -68,12 +71,12 @@ abstract class BasePlayerPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Idplayer', 'Playername', 'Tokencount', 'Goldtokencount', 'Status', 'Info', 'Lastscan', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer', 'playername', 'tokencount', 'goldtokencount', 'status', 'info', 'lastscan', ),
-		BasePeer::TYPE_COLNAME => array (self::IDPLAYER, self::PLAYERNAME, self::TOKENCOUNT, self::GOLDTOKENCOUNT, self::STATUS, self::INFO, self::LASTSCAN, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER', 'PLAYERNAME', 'TOKENCOUNT', 'GOLDTOKENCOUNT', 'STATUS', 'INFO', 'LASTSCAN', ),
-		BasePeer::TYPE_FIELDNAME => array ('idPlayer', 'playerName', 'tokenCount', 'goldTokenCount', 'status', 'info', 'lastScan', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('Idplayer', 'Playername', 'Tokencount', 'Goldtokencount', 'Status', 'Info', 'Lastscan', 'MainIdplayer', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer', 'playername', 'tokencount', 'goldtokencount', 'status', 'info', 'lastscan', 'mainIdplayer', ),
+		BasePeer::TYPE_COLNAME => array (self::IDPLAYER, self::PLAYERNAME, self::TOKENCOUNT, self::GOLDTOKENCOUNT, self::STATUS, self::INFO, self::LASTSCAN, self::MAIN_IDPLAYER, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER', 'PLAYERNAME', 'TOKENCOUNT', 'GOLDTOKENCOUNT', 'STATUS', 'INFO', 'LASTSCAN', 'MAIN_IDPLAYER', ),
+		BasePeer::TYPE_FIELDNAME => array ('idPlayer', 'playerName', 'tokenCount', 'goldTokenCount', 'status', 'info', 'lastScan', 'main_idPlayer', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -83,12 +86,12 @@ abstract class BasePlayerPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Idplayer' => 0, 'Playername' => 1, 'Tokencount' => 2, 'Goldtokencount' => 3, 'Status' => 4, 'Info' => 5, 'Lastscan' => 6, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer' => 0, 'playername' => 1, 'tokencount' => 2, 'goldtokencount' => 3, 'status' => 4, 'info' => 5, 'lastscan' => 6, ),
-		BasePeer::TYPE_COLNAME => array (self::IDPLAYER => 0, self::PLAYERNAME => 1, self::TOKENCOUNT => 2, self::GOLDTOKENCOUNT => 3, self::STATUS => 4, self::INFO => 5, self::LASTSCAN => 6, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER' => 0, 'PLAYERNAME' => 1, 'TOKENCOUNT' => 2, 'GOLDTOKENCOUNT' => 3, 'STATUS' => 4, 'INFO' => 5, 'LASTSCAN' => 6, ),
-		BasePeer::TYPE_FIELDNAME => array ('idPlayer' => 0, 'playerName' => 1, 'tokenCount' => 2, 'goldTokenCount' => 3, 'status' => 4, 'info' => 5, 'lastScan' => 6, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('Idplayer' => 0, 'Playername' => 1, 'Tokencount' => 2, 'Goldtokencount' => 3, 'Status' => 4, 'Info' => 5, 'Lastscan' => 6, 'MainIdplayer' => 7, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('idplayer' => 0, 'playername' => 1, 'tokencount' => 2, 'goldtokencount' => 3, 'status' => 4, 'info' => 5, 'lastscan' => 6, 'mainIdplayer' => 7, ),
+		BasePeer::TYPE_COLNAME => array (self::IDPLAYER => 0, self::PLAYERNAME => 1, self::TOKENCOUNT => 2, self::GOLDTOKENCOUNT => 3, self::STATUS => 4, self::INFO => 5, self::LASTSCAN => 6, self::MAIN_IDPLAYER => 7, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('IDPLAYER' => 0, 'PLAYERNAME' => 1, 'TOKENCOUNT' => 2, 'GOLDTOKENCOUNT' => 3, 'STATUS' => 4, 'INFO' => 5, 'LASTSCAN' => 6, 'MAIN_IDPLAYER' => 7, ),
+		BasePeer::TYPE_FIELDNAME => array ('idPlayer' => 0, 'playerName' => 1, 'tokenCount' => 2, 'goldTokenCount' => 3, 'status' => 4, 'info' => 5, 'lastScan' => 6, 'main_idPlayer' => 7, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -167,6 +170,7 @@ abstract class BasePlayerPeer {
 			$criteria->addSelectColumn(PlayerPeer::STATUS);
 			$criteria->addSelectColumn(PlayerPeer::INFO);
 			$criteria->addSelectColumn(PlayerPeer::LASTSCAN);
+			$criteria->addSelectColumn(PlayerPeer::MAIN_IDPLAYER);
 		} else {
 			$criteria->addSelectColumn($alias . '.IDPLAYER');
 			$criteria->addSelectColumn($alias . '.PLAYERNAME');
@@ -175,6 +179,7 @@ abstract class BasePlayerPeer {
 			$criteria->addSelectColumn($alias . '.STATUS');
 			$criteria->addSelectColumn($alias . '.INFO');
 			$criteria->addSelectColumn($alias . '.LASTSCAN');
+			$criteria->addSelectColumn($alias . '.MAIN_IDPLAYER');
 		}
 	}
 
@@ -459,6 +464,99 @@ abstract class BasePlayerPeer {
 		}
 		return array($obj, $col);
 	}
+
+	/**
+	 * Returns the number of rows matching criteria, joining all related tables
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PlayerPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PlayerPeer::addSelectColumns($criteria);
+		}
+		
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PlayerPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+	/**
+	 * Selects a collection of Player objects pre-filled with all related objects.
+	 *
+	 * @param      Criteria  $criteria
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Player objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$criteria = clone $criteria;
+
+		// Set the correct dbName if it has not been overridden
+		if ($criteria->getDbName() == Propel::getDefaultDB()) {
+			$criteria->setDbName(self::DATABASE_NAME);
+		}
+
+		PlayerPeer::addSelectColumns($criteria);
+		$startcol2 = (PlayerPeer::NUM_COLUMNS - PlayerPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		$stmt = BasePeer::doSelect($criteria, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PlayerPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PlayerPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://www.propelorm.org/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$cls = PlayerPeer::getOMClass(false);
+
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PlayerPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
 	/**
 	 * Returns the TableMap related to this peer.
 	 * This method is not needed for general use but a specific application could have a need.

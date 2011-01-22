@@ -4,3 +4,4 @@ $wrapRules['raidDefaultDays'] = array('Wednesday + 20 hours + 30 minutes','Frida
 $wrapRules['raidStartTokens'] = 25;
 $wrapRules['raidStartGoldTokens'] = 0;
 $wrapRules['MinimulmDelayToAllowAutomaticInscriptionFromArmory'] = 40*3600;
+$wrapRules['ConfirmedAreTakenFirst'] = true;

@@ -27,6 +27,9 @@ class Raidperiod extends BaseRaidperiod {
 		$latestRaid = RaidQuery::create()->orderByDate()->find()->getLast();
 		if(is_null($latestRaid)){
 			$latestRaid = time();
+			if(count($wrapRules['raidDefaultDays']) > 0){
+				$latestRaid = strtotime('last '.$wrapRules['raidDefaultDays'][0]);
+			}
 		}else{
 			$latestRaid = $latestRaid->getDate();
 		}

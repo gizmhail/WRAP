@@ -14,5 +14,12 @@
  * @package    propel.generator.wrap
  */
 class Raid extends BaseRaid {
+	/*
+	 * Return true if edition is currently possible
+	 * (ie, if token impact has yet be analysed : to edit, analyse cancel is needed first)
+	 */
+	function editionAllowed(){
+		return !$this->getRaidperiod()->getAnalysed()&&!$this->getAnalysed();
+	}
 
 } // Raid

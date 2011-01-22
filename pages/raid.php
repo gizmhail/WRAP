@@ -1,16 +1,23 @@
 <?
-$t = microtime(true);
 include "../header.inc.php";
 $id = isset($_GET['id'])?$_GET['id']:false;
 if($id === false) return;
 $raid = RaidQuery::create()->filterByIdRaid($id)->find()->getFirst();
-echo date("d/m",$raid->getDate());
 
 $inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->orderByInscription('desc')->find();
 usort($inscriptions,array('RaidHasPlayer','sortByPriority'));
 $raidPeriod = $raid->getRaidPeriod();
 $raids = $raidPeriod->getRaids();
 
+$currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+$wrapBaseUrl = dirname(dirname($currentUrl));
+
+$inRaid = 0;
+foreach($inscriptions as $i) {
+	if($i->getStatus()==INSCRIPTION_STATUS_TAKEN){
+		$inRaid++;
+	}
+}
 ?>
 <html>
         <head>
@@ -23,19 +30,39 @@ $raids = $raidPeriod->getRaids();
                 <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
         </head>
         <body>
-		<table>
+		<form method='POST' action='../actions/raid.php'>
+		<h1><?echo date("d/m",$raid->getDate());?> - <? echo lang($raid->getStatus())?><input type='submit' name='Save' value='Save'/></h1>
+		<input type='hidden' name='raidId' value='<?php echo $id?>'/>
+		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
+		<div class='raidContent'>
+			Player in raid : <? echo $inRaid;?>
+		</div>
+		<table class='raid'>
 			<tr>
 				<th>Player</th>
-				<th>isRegistered</th>
+				<th><img src='../images/inscription/intime.png'/></th>
 				<th>Status</th>
 				<th>Presence</th>
 			</tr>
+		<input type='hidden' name='inscriptionCount' value='<?php echo count($inscriptions);?>'/>
 		<?php
-		foreach($inscriptions as $inscription){
+		foreach($inscriptions as $inscriptionIndex => $inscription){
 			echo "<tr>";
+			echo "<input type='hidden' name='playerId_$inscriptionIndex' value='".$inscription->getPlayer()->getIdPlayer()."'/>";
 			echo "<td><a href='".$inscription->getPlayer()->armoryUrl()."'>".$inscription->getPlayer()->getPlayerName()."</a></td>";
-			echo "<td>".$inscription->getInscription()."</td>";
-			echo "<td><img title='".$inscription->getStatus()."' alt='".$inscription->getStatus()."' class='status' src='../images/status/".$inscription->getStatus().".png'/></td>";
+			echo "<td><input type='checkbox' name='inscription_$inscriptionIndex' ".($inscription->getInscription()?"checked='true'":"")."/></td>";
+			//Status
+			echo "<td>";
+			echo "<img title='".$inscription->getStatus()."' alt='".$inscription->getStatus()."' class='status' src='../images/status/".$inscription->getStatus().".png'/>";
+			echo "<select name='status_$inscriptionIndex'>";
+			foreach(RaidHasPlayer::allStatus() as $existingStatus){
+				$value = $existingStatus;
+				$text = lang($value);
+				$checkedtext = ($value==$inscription->getStatus())?"selected='true'":"";
+				echo "<option value='$value' $checkedtext>$text</option>";
+			}
+			echo "</select>";
+			echo "</td>";
 			//Presence
 			echo "<td>";
 			echo "<div align='center'>".$inscription->getPlayer()->getTokenCount()." <img src='../images/token.png' width='20px'/></div>";
@@ -55,6 +82,6 @@ $raids = $raidPeriod->getRaids();
 		}
 		?>
 		</table>
-<?php echo microtime(true)-$t;?>
+		</form>
 	</body>
 </html>

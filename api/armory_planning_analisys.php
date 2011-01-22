@@ -50,7 +50,7 @@ foreach($planningPushes as $planningPush){
 			$i->setPlayerIdPlayer($p->getIdPlayer());
 			$i->setRaidIdRaid($raid->getIdRaid());
 			$i->setInscription(0);
-			$i->setHistory(time().':'.$newStatus);//TODO
+			//$i->setHistory(serialize(array(microtime(true) => $newStatus)));//TODO
 			$i->setStatus($newStatus);
 			$i->checkInscription($ignoreMinimumDelay);
 			$i->save();
@@ -62,12 +62,12 @@ foreach($planningPushes as $planningPush){
 				case INSCRIPTION_STATUS_CONFIRMED:
 				case INSCRIPTION_STATUS_ACCEPTED:
 				case INSCRIPTION_STATUS_UNCERTAIN:
-					$history = $i->parsedHistory();
+					//$history = $i->parsedHistory();
 					if($newStatus != $i->getStatus()){
 						$i->setStatus(translateInscriptionStatus($status));
 			                        $i->checkInscription();
-						$history[microtime(true)] = $newStatus;
-						$i->setHistory(serialize($history));//TODO
+						//$history[microtime(true)] = $newStatus;
+						//$i->setHistory(serialize($history));//TODO
 	        	                	$i->save();
 					}
 					break;
@@ -78,7 +78,7 @@ foreach($planningPushes as $planningPush){
 }
 
 //Reset file
-//rename($planningCacheFile,$planningCacheFile.microtime(true));
+rename($planningCacheFile,$planningCacheFile.microtime(true));
 //file_put_contents($planningCacheFile,serialize(array()));
 
 function translateInscriptionStatus($status){

@@ -2,6 +2,7 @@
 
 //Base path
 $wrapBaseDir = dirname(__FILE__);
+$wrapUpdateLog = $wrapBaseDir."/logs/modifications.txt";
 
 //Conf
 include_once($wrapBaseDir.'/conf.inc.php');
@@ -32,3 +33,7 @@ if(isset($wrapLanguage)&&!is_file("$wrapBaseDir/lang/$wrapLanguage.inc.php")){
 	$wrapLanguageConfFile = "$wrapBaseDir/lang/$wrapLanguage.inc.php";
 	include_once($wrapLanguageConfFile);
 }
+include_once("$wrapBaseDir/lib/lang.php");
+
+//Logs 
+include_once("$wrapBaseDir/lib/logs.php");

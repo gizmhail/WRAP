@@ -3,7 +3,6 @@ include "../header.inc.php";
 $id = isset($_GET['id'])?$_GET['id']:false;
 if($id === false) return;
 $raidPeriod = RaidperiodQuery::create()->filterByIdRaidPeriod($id)->find()->getFirst();
-echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());
 
 $players = array();
 $raidDate = array();
@@ -30,11 +29,16 @@ ksort($players);
                 <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
         </head>
         <body>
-		<table>
+		<h1>Raid period : <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?></h1>
+		<table class='raidPeriod'>
 			<tr>
 				<th>Player</th>
 				<?php
-				foreach($raidByDate as $rd=>$raid) echo "<td>".ucfirst(strftime("%a %d",$rd))." <small>(".$raid->getStatus().")</small></td>";
+				foreach($raidByDate as $rd=>$raid) {
+					echo "<td>";
+					echo "<a href='raid.php?id=".$raid->getIdRaid()."'>".ucfirst(strftime("%a %d",$rd))."</a>";
+					echo " <div><small>(".$raid->getStatus().")</small></div></td>";
+				}
 				?>
 			</tr>
 		<?php
@@ -51,7 +55,7 @@ ksort($players);
 					if($inscription->hasPlayingStatus()) echo "<img title='$alt' alt='$alt' class='inscriptionInTime' src='../images/inscription/$intimeImg'/>";
 
 				}else{
-					echo "?";
+					echo "<img title='NoAnswer' alt='NoAnswer' class='periodStatus' src='../images/status/NoAnswer.png'/>";
 				}
 				echo "</td>";
 			}

@@ -9,3 +9,21 @@ img.periodStatus{
 img.status{
 	width:40px;
 }
+
+table.raid  td,table.raidPeriod  td{
+	border:1px solid grey;
+}
+
+table.raid,table.raidPeriod{
+	border:1px solid grey;
+	border-collapse: collapse;
+}
+
+div.raidContent{
+	margin-left:10px;
+	margin-bottom:20px;
+}
+
+body{
+	font-family:Arial, Verdana, sans-serif;
+}

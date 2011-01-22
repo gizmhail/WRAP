@@ -14,6 +14,24 @@
  * @package    propel.generator.wrap
  */
 class RaidHasPlayer extends BaseRaidHasPlayer {
+
+	function setStatus($status){
+		if($status != $this->getStatus()){
+			$history = $this->parsedHistory();
+			$history[microtime(true)] = $status;
+			$this->setHistory(serialize($history));
+		}
+		return parent::setStatus($status);
+	}
+
+	function preSave(){
+		if($this->isModified()){
+			$text = microtime(true).';'.$this->getRaid()->getIdRaid().';'.$this->getPlayer()->getPlayerName().';'.$this->getStatus().':'.$this->getInscription();
+			logChange($text);	
+		}	
+		return parent::preSave();
+	}
+
 	function checkInscription($ignoreMinimumDelay = false){
 		global $wrapRules; 
 		switch($this->getStatus()){
@@ -30,6 +48,9 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 
 	static function sortByPriority($i1,$i2){
 		global $wrapRules;
+		//For presentation purposes: Taken is displayed first
+		if($i1->getStatus() == INSCRIPTION_STATUS_TAKEN && $i2->getStatus != INSCRIPTION_STATUS_TAKEN) return -1;
+		if($i2->getStatus() == INSCRIPTION_STATUS_TAKEN && $i1->getStatus != INSCRIPTION_STATUS_TAKEN) return 1;
 		//If confirmed, use rules to know if it is more important than tokens
 		if($wrapRules['ConfirmedAreTakenFirst']){
 			if($i1->getStatus() == INSCRIPTION_STATUS_CONFIRMED && $i2->getStatus != INSCRIPTION_STATUS_CONFIRMED) return -1;
@@ -41,9 +62,12 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 		//Token priority
 		$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
 		if($playerPriority!=0) return $playerPriority;
-		//INscription in tme
+		//Inscription in tme
 		if($i1->getInscription() && ! $i2->getInscription()) return -1;
 		if($i2->getInscription() && ! $i1->getInscription()) return 1;
+		//Token priority
+		$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
+		if($playerPriority!=0) return $playerPriority;
 		//Week period analisys
 		$playerInscriptions1 = $i1->getPlayer()->inscriptionForRaidPeriod($i1->getRaid()->getRaidPeriod());
 		$playerInscriptions2 = $i2->getPlayer()->inscriptionForRaidPeriod($i2->getRaid()->getRaidPeriod());

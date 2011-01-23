@@ -31,30 +31,50 @@ foreach($inscriptions as $i) {
         </head>
         <body>
 		<form method='POST' action='../actions/raid.php'>
-		<h1><?echo date("d/m",$raid->getDate());?> - <? echo lang($raid->getStatus())?><input type='submit' name='Save' value='Save'/></h1>
+		<h1>
+			Raid : <?echo date("d/m",$raid->getDate());?> <small>(<a href='raid_period.php?id=<? echo $raidPeriod->getIdRaidPeriod()?>'>Period <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>)</a></small>
+		</h1>
+		<div>
+			<select name='raidStatus' <? echo (($raid->getRaidPeriod()->getAnalysed()?"disabled='true'":''));?>>
+				<?php
+				foreach($raid->allStatus() as $existingStatus){
+					$value = $existingStatus;
+					$text = lang($value);
+					$checkedtext = ($value==$raid->getStatus())?"selected='true'":"";
+					echo "<option value='$value' $checkedtext>$text</option>";
+				} 
+				?>
+			</select>
+			<input type='submit' name='Save' value='Save'/></h1>
+		</div>
 		<input type='hidden' name='raidId' value='<?php echo $id?>'/>
 		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
 		<div class='raidContent'>
 			Player in raid : <? echo $inRaid;?>
 		</div>
+		<input type='hidden' name='inscriptionCount' value='<?php echo count($inscriptions);?>'/>
 		<table class='raid'>
 			<tr>
+				<th>#</th>
 				<th>Player</th>
 				<th><img src='../images/inscription/intime.png'/></th>
 				<th>Status</th>
 				<th>Presence</th>
 			</tr>
-		<input type='hidden' name='inscriptionCount' value='<?php echo count($inscriptions);?>'/>
 		<?php
 		foreach($inscriptions as $inscriptionIndex => $inscription){
-			echo "<tr>";
+			?>
+			<tr>
+				<td><? echo (1+$inscriptionIndex);?></td>	
+			<?
+			///TODO Better formating
 			echo "<input type='hidden' name='playerId_$inscriptionIndex' value='".$inscription->getPlayer()->getIdPlayer()."'/>";
 			echo "<td><a href='".$inscription->getPlayer()->armoryUrl()."'>".$inscription->getPlayer()->getPlayerName()."</a></td>";
-			echo "<td><input type='checkbox' name='inscription_$inscriptionIndex' ".($inscription->getInscription()?"checked='true'":"")."/></td>";
+			echo "<td><input type='checkbox' name='inscription_$inscriptionIndex' ".($inscription->getInscription()?"checked='true'":"")." ".(($raid->editionAllowed()?'':"disabled='true'"))."/></td>";
 			//Status
 			echo "<td>";
 			echo "<img title='".$inscription->getStatus()."' alt='".$inscription->getStatus()."' class='status' src='../images/status/".$inscription->getStatus().".png'/>";
-			echo "<select name='status_$inscriptionIndex'>";
+			echo "<select name='status_$inscriptionIndex' ".(($raid->editionAllowed()?'':"disabled='true'")).">";
 			foreach(RaidHasPlayer::allStatus() as $existingStatus){
 				$value = $existingStatus;
 				$text = lang($value);

@@ -19,7 +19,23 @@ class Raid extends BaseRaid {
 	 * (ie, if token impact has yet be analysed : to edit, analyse cancel is needed first)
 	 */
 	function editionAllowed(){
-		return !$this->getRaidperiod()->getAnalysed()&&!$this->getAnalysed();
+		return loginOk()&&!$this->getRaidperiod()->getAnalysed()&&!$this->getAnalysed();
+	}
+
+	function preSave(){
+                if($this->isModified()){
+                        $text = 'R:'.microtime(true).';'.$this->getDate().';'.$this->getStatus().';'.$this->getAnalysed();
+                        logChange($text);       
+                }       
+                return parent::preSave();
+        }
+	function allStatus(){
+		return array(
+			RAID_STATUS_DONE,
+			RAID_STATUS_POSSIBLE,
+			RAID_STATUS_PLANNED,
+			RAID_STATUS_CANCELED
+		);
 	}
 
 } // Raid

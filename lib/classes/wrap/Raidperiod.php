@@ -19,6 +19,15 @@ class Raidperiod extends BaseRaidperiod {
 		return true;
 	}
 
+	/*
+	 * Return true if edition is currently possible
+	 * (ie, if token impact has yet be analysed : to edit, analyse cancel is needed first)
+	 */
+	function editionAllowed(){
+		return loginOk()&&!$this->getAnalysed();
+	}
+
+
 	function createRaids(){
 		global $wrapRules;
 		//1-  check that raids are not already created

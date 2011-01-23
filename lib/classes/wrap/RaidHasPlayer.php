@@ -26,7 +26,7 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 
 	function preSave(){
 		if($this->isModified()){
-			$text = microtime(true).';'.$this->getRaid()->getIdRaid().';'.$this->getPlayer()->getPlayerName().';'.$this->getStatus().':'.$this->getInscription();
+			$text = 'RHP:'.microtime(true).';'.$this->getRaid()->getIdRaid().';'.$this->getPlayer()->getPlayerName().';'.$this->getStatus().';'.$this->getInscription();
 			logChange($text);	
 		}	
 		return parent::preSave();
@@ -44,6 +44,14 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 			default:
 				$this->setInscription(0);
 		}
+	}
+
+	function impact(){
+		$impact = 0;
+		if($this->getStatus() == INSCRIPTION_STATUS_TAKEN){
+			$impact = -1;
+		}
+		return $impact;
 	}
 
 	static function sortByPriority($i1,$i2){

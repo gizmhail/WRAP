@@ -9,6 +9,7 @@ if(is_file($planningCacheFile)){
 
 $players = array();
 $ignoreMinimumDelay = false; 
+
 foreach($planningPushes as $planningPush){
 	$raid = RaidQuery::create()->findByArmoryid($planningPush['raidId'])->getFirst();
 	if(!$raid){
@@ -27,7 +28,13 @@ foreach($planningPushes as $planningPush){
 			}
 		}
 	}
+	if(!loginOk()){
+		header('Location:../actions/login.php?returnUrl='.rawurlencode('http://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF']));
+		exit;
+	}
 	if(!$raid) continue;
+	$previousInscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->orderByInscription('desc')->find();
+	$newInscriptions = array();
 	$inscriptions = explode(";",$planningPush['data']);
 	$raidStatus = array();
 	foreach($inscriptions as $inscription){
@@ -58,9 +65,13 @@ foreach($planningPushes as $planningPush){
 			//Update if not WRAP status (only armory status can be overriden by armory info)
 			$newStatus = translateInscriptionStatus($status);
 			switch($newStatus){
+				case INSCRIPTION_STATUS_ACCEPTED:
+					//If armory states accepted, and wrap confirmed, we guess that is has been manually edited
+					if($i->getStatus() == INSCRIPTION_STATUS_CONFIRMED){
+						$newStatus = INSCRIPTION_STATUS_CONFIRMED;
+					}
 				case INSCRIPTION_STATUS_REFUSED:
 				case INSCRIPTION_STATUS_CONFIRMED:
-				case INSCRIPTION_STATUS_ACCEPTED:
 				case INSCRIPTION_STATUS_UNCERTAIN:
 					//$history = $i->parsedHistory();
 					if($newStatus != $i->getStatus()){
@@ -73,7 +84,15 @@ foreach($planningPushes as $planningPush){
 					break;
 			}
 		}
-		//TODO - Major : handle uninscription (makes entry disapeear in armory)
+		$newInscriptions[] = $i;
+	}
+	//Handle uninscriptions (which make entry disapear in armory)
+	foreach($previousInscriptions as $pi){	
+		if(!in_array($pi,$newInscriptions)&&$pi->getStatus()!=INSCRIPTION_STATUS_NOANSWER){
+			$pi->setStatus(INSCRIPTION_STATUS_REFUSED);
+			$pi->setINscription(0);
+			$pi->save();
+		}
 	}
 }
 

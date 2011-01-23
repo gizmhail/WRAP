@@ -37,3 +37,6 @@ include_once("$wrapBaseDir/lib/lang.php");
 
 //Logs 
 include_once("$wrapBaseDir/lib/logs.php");
+
+//Authent
+include_once("$wrapBaseDir/lib/auth.php");

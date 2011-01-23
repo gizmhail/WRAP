@@ -47,9 +47,13 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 	}
 
 	function impact(){
+		global $wrapRules; 
 		$impact = 0;
 		if($this->getStatus() == INSCRIPTION_STATUS_TAKEN){
-			$impact = -1;
+			$impact = -$wrapRules['RaidSlotTokenPrice'];
+		}
+		if($this->getStatus() == INSCRIPTION_STATUS_MISING){
+			$impact = -$wrapRules['RaidSlotTokenPrice'];
 		}
 		return $impact;
 	}

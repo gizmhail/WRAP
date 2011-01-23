@@ -9,5 +9,5 @@ $wowServer = "Garona";
 
 //Login info
 $wrapMainLogin = 'admin';
-$wrapMainPassword = 'YOUR_DB_PASSWORD';
+$wrapMainPassword = 'fQb8avQa4axfcJ5Z';
 

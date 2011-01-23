@@ -40,3 +40,7 @@ include_once("$wrapBaseDir/lib/logs.php");
 
 //Authent
 include_once("$wrapBaseDir/lib/auth.php");
+
+//Presentation libs
+include_once("$wrapBaseDir/lib/impactInfo.inc.php");
+

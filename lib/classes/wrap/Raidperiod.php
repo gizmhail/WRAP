@@ -27,6 +27,88 @@ class Raidperiod extends BaseRaidperiod {
 		return loginOk()&&!$this->getAnalysed();
 	}
 
+	function impact($impactIfActivated=true){
+		global $wrapRules;
+		$impacts = array();
+		$raids = $this->getRaids();
+		$playerInscriptionCounts = array();
+		foreach($raids as $raid){
+			$inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->orderByInscription('desc')->find();
+			foreach($inscriptions as $inscription){
+				if($inscription->getInscription()){
+					$playerInscriptionCounts[$inscription->getPlayer()->getIdPlayer()] += 1; 
+				}
+				$trackRaid = ($impactIfActivated)?!$raid->getAnalysed():$raid->getAnalysed();
+				if($trackRaid){
+					$impact = $inscription->impact();
+					if($impact!=0) {
+						$impacts[$inscription->getPlayer()->getIdPlayer()]['raidsNotAnalysed'][$raid->getIdRaid()] = $impact;
+					}
+				}
+			}
+		}
+		foreach($playerInscriptionCounts as $playerId => $inscriptionCount){
+			if($inscriptionCount >= $wrapRules['InscriptionByWeekExpected']){
+				$impacts[$playerId]['inscriptionsInTime'] = $wrapRules['TokenForExpectedInscriptions']; 
+			}
+		}
+		foreach($impacts as $playerId => $impactInfo){
+			$total = isset($impactInfo['inscriptionsInTime'])?$impactInfo['inscriptionsInTime']:0;
+			if(isset($impactInfo['raidsNotAnalysed'])){
+				foreach($impactInfo['raidsNotAnalysed'] as $raidImpact){
+					$total += $raidImpact;
+				}
+			}
+			$impacts[$playerId]['total'] = $total;
+		}
+		return $impacts;
+	}
+
+	function doAnalysis($raidPeriodStatus=RAIDPERIOD_STATUS_DONE){
+		$impactsByPlayer = $this->impact();
+		foreach($impactsByPlayer as $playerId => $impacts){
+			if(isset($impacts['inscriptionsInTime'])){
+				$player = PlayerQuery::create()->filterByIdPlayer($playerId)->findOne();
+				$player->setTokenCount($player->getTokenCount()+$impacts['inscriptionsInTime']);
+				$player->save();
+			}
+		}
+		foreach($this->getRaids() as $raid){
+			if(!$raid->getAnalysed()){
+				$raid->doAnalysis(RAID_STATUS_DONE);
+			}
+		}
+		$this->setStatus($raidPeriodStatus);
+		$this->setAnalysed(true);
+		$this->save();
+	}
+
+	function doCancelAnalysis($raidPeriodStatus=RAIDPERIOD_STATUS_PLANNED){
+		$impactsByPlayer = $this->impact();
+		foreach($impactsByPlayer as $playerId => $impacts){
+			if(isset($impacts['inscriptionsInTime'])){
+				$player = PlayerQuery::create()->filterByIdPlayer($playerId)->findOne();
+				$player->setTokenCount($player->getTokenCount()-$impacts['inscriptionsInTime']);
+				$player->save();
+			}
+		}
+		foreach($this->getRaids() as $raid){
+			if($raid->getAnalysed()){
+				$raid->doCancelAnalysis(RAID_STATUS_PLANNED);
+			}
+		}
+		$this->setStatus($raidPeriodStatus);
+		$this->setAnalysed(false);
+		$this->save();
+	}
+
+
+	function allStatus(){
+		return array(
+			RAIDPERIOD_STATUS_DONE,
+			RAIDPERIOD_STATUS_PLANNED
+		);
+	}
 
 	function createRaids(){
 		global $wrapRules;

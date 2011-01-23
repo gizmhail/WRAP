@@ -1,8 +1,8 @@
 <?php
 
 
-define('RAIDPERIOD_STATUS_DONE','Done');
-define('RAIDPERIOD_STATUS_PLANNED','Planned');
+define('RAIDPERIOD_STATUS_DONE','PeriodDone');
+define('RAIDPERIOD_STATUS_PLANNED','PeriodPlanned');
 
 define('RAID_STATUS_DONE','Done');
 define('RAID_STATUS_POSSIBLE','Possible');

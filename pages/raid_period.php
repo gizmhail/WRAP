@@ -4,6 +4,8 @@ $id = isset($_GET['id'])?$_GET['id']:false;
 if($id === false) return;
 $raidPeriod = RaidperiodQuery::create()->filterByIdRaidPeriod($id)->find()->getFirst();
 
+$raidPeriodEditionAuthorisedHtml = (!loginOk())?'disabled="true"':'';
+
 $players = array();
 $raidDate = array();
 $raids = $raidPeriod->getRaids();
@@ -11,12 +13,29 @@ foreach($raids as $raid){
 	$raidByDate[$raid->getDate()] = $raid;
 	$inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->orderByInscription('desc')->find();
 	foreach($inscriptions as $inscription){
-		$players[$inscription->getPlayer()->getPlayerName()][$raid->getDate()] = $inscription;
+		$players[$inscription->getPlayer()->getIdPlayer()][$raid->getDate()] = $inscription;
 	}
 }
 
+function sortByPlayerName($pId1,$pId2){
+	$player1 = PlayerQuery::create()->filterByIdPlayer($pId1)->findOne();
+	$player2 = PlayerQuery::create()->filterByIdPlayer($pId2)->findOne();
+	return strcmp($player1->getPlayerName(), $player2->getPlayerName());
+} 
+
+function sortByTokenCount($pId1,$pId2){
+	$player1 = PlayerQuery::create()->filterByIdPlayer($pId1)->findOne();
+	$player2 = PlayerQuery::create()->filterByIdPlayer($pId2)->findOne();
+	if($player1->getTokenCount() > $player2->getTokenCount()) return -1;
+	if($player1->getTokenCount() < $player2->getTokenCount()) return 1;
+	return 0;
+}
+
 ksort($raidByDate);
-ksort($players);
+//uksort($players,'sortByPlayerName');
+uksort($players,'sortByTokenCount');
+$currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+
 
 ?><html>
         <head>
@@ -29,10 +48,25 @@ ksort($players);
                 <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
         </head>
         <body>
+		<form method='POST' action='../actions/raid_period.php'>
 		<h1>Raid period : <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?></h1>
+		<select name='raidPeriodStatus' <? echo $raidPeriodEditionAuthorisedHtml ?> >
+		<?php
+		foreach($raidPeriod->allStatus() as $existingStatus){
+			$value = $existingStatus;
+			$text = lang($value);
+			$checkedtext = ($value==$raidPeriod->getStatus())?"selected='true'":"";
+			echo "<option value='$value' $checkedtext>$text</option>";
+		} 
+		?>
+
+		<input type='submit' name='Save' value='Save'<? echo $raidPeriodEditionAuthorisedHtml?> /></h1>
+		<input type='hidden' name='raidPeriodId' value='<?php echo $id?>'/>
+		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
 		<table class='raidPeriod'>
 			<tr>
 				<th>Player</th>
+				<th><img src='../images/token.png' width='20px'/></th>
 				<?php
 				foreach($raidByDate as $rd=>$raid) {
 					echo "<td>";
@@ -42,9 +76,11 @@ ksort($players);
 				?>
 			</tr>
 		<?php
-		foreach($players as $player => $inscriptions){
+		foreach($players as $playerId => $inscriptions){
+			$player = PlayerQuery::create()->filterByIdPlayer($playerId)->findOne();
 			echo "<tr>";
-			echo "<td>".$player."</td>";
+			echo "<td>".$player->getPlayerName()."</td>";
+			echo "<td>".$player->getTokenCount()."</td>";
 			foreach($raidByDate as $rd=>$raid){
 				echo "<td>";
 				if(isset($inscriptions[$rd])){
@@ -64,5 +100,10 @@ ksort($players);
 		}
 		?>
 		</table>
+		</form>
+		<div style='font-size:small'>
+			<h1>Impact if <? echo ($raidPeriod->getAnalysed()?'unsaved':'saved')?></h1>
+			<? raidPeriodImpactHtml($raidPeriod,!$raidPeriod->getAnalysed());?>
+		</div>
 	</body>
 </html>

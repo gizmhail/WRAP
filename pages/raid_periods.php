@@ -4,8 +4,10 @@ include_once "../header.inc.php";
 
 // ----- Add raid period
 if(isset($_GET['addRaidPeriod'])){
+	if(!loginOK())exit;
 	$period = new Raidperiod();
 	$period->setAnalysed(false);
+	$period->setStatus(RAIDPERIOD_STATUS_PLANNED);
 	$period->createRaids();
 	//echo "<pre>";
 	//print_r($period);
@@ -37,13 +39,13 @@ $periods = RaidperiodQuery::create()->find();
 		<title>Raid periods</title>
 		<link type="text/css" href="../css/smoothness/jquery-ui-1.8.8.custom.css" rel="stylesheet" />	
 		<link type="text/css" href="../css/buttons.css" rel="stylesheet" />	
+		<link type="text/css" href="../css/wrap.css" rel="stylesheet" />	
 		<script type="text/javascript" src="../js/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
 	</head>
 	<body>
 		<table>
 			<tr>
-				<td>Count for token</td>
 				<td>Period</td>
 				<td>Raids</td>
 			</tr>
@@ -51,7 +53,6 @@ $periods = RaidperiodQuery::create()->find();
 			foreach($periods as $period){
 				?>
 			<tr>
-				<td><input type='checkbox'<?php echo ($period->analyseAvailable())?'':'disabled="true"'?>/></td>
 				<td><a href='raid_period.php?id=<?php echo $period->getIdRaidperiod();?>'><?php echo date('d/m',$period->startDate());?> - <?php echo date('d/m',$period->endDate());?></a></td>
 				<td>
 					<?php
@@ -65,6 +66,8 @@ $periods = RaidperiodQuery::create()->find();
 			}
 			?>
 		</table>
+		<?if(loginOK()){?>
 		<a href="?addRaidPeriod=true" class="button green" data-icon="+">Add raid period</a>
+		<?}?>
 	</body>
 </html>

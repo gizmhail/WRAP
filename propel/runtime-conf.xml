@@ -15,7 +15,7 @@
         <connection>
           <dsn>mysql:host=localhost;dbname=wrapdev</dsn>
           <user>wrapdev</user>
-          <password>YOUR_DB_PASSWORD</password>
+          <password>fQb8avQa4axfcJ5Z</password>
         </connection>
       </datasource>
     </datasources>

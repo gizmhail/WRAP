@@ -38,4 +38,35 @@ class Raid extends BaseRaid {
 		);
 	}
 
+	//Cancelation of analysis
+	function doCancelAnalysis($raidStatus=RAID_STATUS_PLANNED){
+		$inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($this->getIdRaid())->find();
+		$impacts = array();
+		foreach($inscriptions as $inscription){
+			$tokenImpact = $inscription->impact();
+			if($tokenImpact != 0){
+				$inscription->getPlayer()->setTokenCount($inscription->getPlayer()->getTokenCount()-$tokenImpact);
+				$inscription->getPlayer()->save();		
+			}
+		}
+		$this->setStatus($raidStatus);
+		$this->setAnalysed(false);
+		$this->save();
+	}
+
+	function doAnalysis($raidStatus=RAID_STATUS_DONE){
+		//Analysis
+		$inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($this->getIdRaid())->find();
+		$impacts = array();
+		foreach($inscriptions as $inscription){
+			$tokenImpact = $inscription->impact();
+			if($tokenImpact != 0){
+				$inscription->getPlayer()->setTokenCount($inscription->getPlayer()->getTokenCount()+$tokenImpact);
+				$inscription->getPlayer()->save();		
+			}
+		}
+		$this->setStatus($raidStatus);
+		$this->setAnalysed(true);
+		$this->save();
+	}
 } // Raid

@@ -35,7 +35,7 @@ foreach($inscriptions as $i) {
 			Raid : <?echo date("d/m",$raid->getDate());?> <small>(<a href='raid_period.php?id=<? echo $raidPeriod->getIdRaidPeriod()?>'>Period <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>)</a></small>
 		</h1>
 		<div>
-			<select name='raidStatus' <? echo (($raid->getRaidPeriod()->getAnalysed()?"disabled='true'":''));?>>
+			<select name='raidStatus' <? if(!loginOk()||$raidPeriod->getanalysed())echo 'disabled="true"'?>>
 				<?php
 				foreach($raid->allStatus() as $existingStatus){
 					$value = $existingStatus;
@@ -45,7 +45,7 @@ foreach($inscriptions as $i) {
 				} 
 				?>
 			</select>
-			<input type='submit' name='Save' value='Save'/></h1>
+			<input type='submit' name='Save' value='Save'<? if(!loginOk()||$raidPeriod->getanalysed())echo 'disabled="true"'?>/></h1>
 		</div>
 		<input type='hidden' name='raidId' value='<?php echo $id?>'/>
 		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
@@ -103,5 +103,9 @@ foreach($inscriptions as $i) {
 		?>
 		</table>
 		</form>
+		<div style='font-size:small'>
+			<h1>Impact if <? echo ($raid->getAnalysed()?'unsaved':'saved')?></h1>
+			<? raidImpactHtml($raid,!$raid->getAnalysed());?>
+		</div>
 	</body>
 </html>

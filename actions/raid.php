@@ -1,6 +1,11 @@
 <?php
 
 include "../header.inc.php";
+if(!loginOK()){
+	header("Location:login.php?returnUrl=".rawurlencode($_REQUEST['returnUrl']));
+}
+
+
 $id = isset($_REQUEST['raidId'])?$_REQUEST['raidId']:false;
 if($id === false) return;
 $raid = RaidQuery::create()->filterByIdRaid($id)->find()->getFirst();
@@ -33,70 +38,30 @@ if(isset($_REQUEST['raidStatus'])){
 	$confirmed = isset($_REQUEST['confirmed']);
 	if($raidStatus != $raid->getStatus()){
 		if($raid->getStatus() != RAID_STATUS_DONE&&$raidStatus != RAID_STATUS_DONE){
-			//NO token impact
-			//TODO
+			//No token impact
+			$raid->setStatus($raidStatus);
+                        $raid->save();
 		}else{
-			$inscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->find();
-			$impacts = array();
-			foreach($inscriptions as $inscription){
-				$tokenImpact = $inscription->impact();
-				if($tokenImpact != 0){
-					$impacts[] = array(
-						"player" => $inscription->getPlayer(),
-						"impact" => $tokenImpact,
-					);
-				}
-			}
 			if(!$confirmed){
 				header('Content-Type: text/html; charset=utf-8'); 
-						?>
-						<h1>
-							Switch raid <? echo date("d/m",$raid->getDate())?> 
-							from <? echo lang($raid->getStatus());?> to status <?echo lang($raidStatus);?>
-						</h1>
-						<h2>Impact</h2>
-						<ul>
-						<?
-						foreach($impacts as $impact){
-							if(($raidStatus == RAID_STATUS_DONE)){
-								$tokenImpact = (($impact['impact']>0)?'+':'').$impact['impact'];
-								
-							}else{
-								$tokenImpact = (($impact['impact']>0)?'':'+').(-1*$impact['impact']);
-							}
-							?>
-							<li>
-								<? echo $impact['player']->getPlayerName()?>:
-								<b><? echo $tokenImpact?><img src='../images/token.png' width='20px'/></b>
-							</li>
-							<hr/>
-							<?php					
-						}
-						?>
-						</ul>
-						<a href='?confirmed=true&<? echo "raidStatus=$raidStatus&raidId=$id&returnUrl=".rawurlencode($_REQUEST['returnUrl']);?>'>Confirm ?</a>
-						<?php
-						unset($_REQUEST['returnUrl']);
+				?>
+				<h1>
+					Switch raid <? echo date("d/m",$raid->getDate())?> 
+					from <? echo lang($raid->getStatus());?> to status <?echo lang($raidStatus);?>
+				</h1>
+				<h2>Impact</h2>
+				<? raidImpactHtml($raid,$raidStatus == RAID_STATUS_DONE)?>
+				<a href='?confirmed=true&<? echo "raidStatus=$raidStatus&raidId=$id&returnUrl=".rawurlencode($_REQUEST['returnUrl']);?>'>Confirm ?</a>
+				<?php
+				unset($_REQUEST['returnUrl']);
 			}else{	
 
 				if($raid->getStatus() == RAID_STATUS_DONE){
 					//Cancelation of analysis
-					foreach($impacts as $impact){
-						$impact['player']->setTokenCount($impact['player']->getTokenCount()-$impact['impact']);
-						$impact['player']->save();
-					}
-					$raid->setStatus($raidStatus);
-					$raid->setAnalysed(false);
-					$raid->save();
+					$raid->doCancelAnalysis($raidStatus);
 				}else if($raidStatus == RAID_STATUS_DONE){
 					//Analysis
-					foreach($impacts as $impact){
-						$impact['player']->setTokenCount($impact['player']->getTokenCount()+$impact['impact']);
-						$impact['player']->save();
-					}
-					$raid->setStatus($raidStatus);
-					$raid->setAnalysed(true);
-					$raid->save();
+					$raid->doAnalysis($raidStatus);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 <?php
 include "../header.inc.php";
 header("Access-Control-Allow-Origin: *");
+
 $dateTimeAnalisys = false;
 if(isset($_GET['dateTime'])){
 	if(preg_match("|^.*\((..)/(..)\) (..):(..)|",$_GET['dateTime'],$matches)){

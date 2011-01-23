@@ -11,7 +11,7 @@ $conf = array (
       array (
         'dsn' => 'mysql:host=localhost;dbname=wrapdev',
         'user' => 'wrapdev',
-        'password' => 'YOUR_DB_PASSWORD',
+        'password' => 'fQb8avQa4axfcJ5Z',
       ),
     ),
     'default' => 'wrap',

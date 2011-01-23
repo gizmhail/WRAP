@@ -49,7 +49,10 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
         </head>
         <body>
 		<form method='POST' action='../actions/raid_period.php'>
-		<h1>Raid period : <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?></h1>
+		<h1>
+			Raid period : <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>
+			<small>(<a href='raid_periods.php'>Other raids</a>)</small>
+		</h1>
 		<select name='raidPeriodStatus' <? echo $raidPeriodEditionAuthorisedHtml ?> >
 		<?php
 		foreach($raidPeriod->allStatus() as $existingStatus){

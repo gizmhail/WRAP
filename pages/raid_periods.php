@@ -44,6 +44,8 @@ $periods = RaidperiodQuery::create()->find();
 		<script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
 	</head>
 	<body>
+		<fieldset>
+		<legend>Raids</legend>
 		<table>
 			<tr>
 				<td>Period</td>
@@ -69,5 +71,20 @@ $periods = RaidperiodQuery::create()->find();
 		<?if(loginOK()){?>
 		<a href="?addRaidPeriod=true" class="button green" data-icon="+">Add raid period</a>
 		<?}?>
+		</fieldset>
+	
+		<fieldset>
+			<legend>Info</legend>
+			<a href='players.php'>Players</a>
+		</fieldset>
+	
+		<?if(loginOK()){?>
+		<div>		
+		<fieldset>
+			<legend>Armory auto-update</legend>
+		<?include_once("$wrapBaseDir/api/bookmarklet.php");?>
+		<?}?>
+
+		</div>
 	</body>
 </html>

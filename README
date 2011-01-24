@@ -1,11 +1,18 @@
-
+=== WRAP : WoW RAid Priority ===
+This software produces a web site to track WoW presence and assist in selectioning the player going to a raid
 
 ___________________________________________
 TODO
-Rules ---
-Auto valid inscription on importation only up to a certian date (for instance, 2 days before event)
-Later, should be updated manually)
-Minor ---
+Improvements ---
+* track loot
+* track specialisations
+* track roles
+* trackbuff available in raid
+
+Armory link ---
+Fetch player description with armory
+
+Rerolls ---
 - add a field in database to link reroll together
 => currently, only one main should be active and handle answers
 

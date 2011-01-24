@@ -14,5 +14,12 @@
  * @package    propel.generator.wrap
  */
 class Loot extends BaseLoot {
-
+	function wowheadUrl(){
+		//TODO use description
+		$url = "http://fr.wowhead.com/search?q=".rawurlencode($this->getLootname());
+		if(preg_match("|(http://[a-z.]*wowhead.com/item=[^\s]*)|",$this->getComment(),$matches)){
+			$url = $matches[1];
+		}
+		return $url;
+	}
 } // Loot

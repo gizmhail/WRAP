@@ -27,12 +27,14 @@ foreach($inscriptions as $i) {
                 <link type="text/css" href="../css/buttons.css" rel="stylesheet" />     
                 <link type="text/css" href="../css/wrap.css" rel="stylesheet" />     
                 <script type="text/javascript" src="../js/jquery-1.4.4.min.js"></script>
-                <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
+                <script type="text/javascript" src="../js/jquery-ui-1.8.8.custom.min.js"></script>
+                <script type="text/javascript" src="../js/wrap.js"></script>
+		<script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
         </head>
         <body>
 		<form method='POST' action='../actions/raid.php'>
 		<h1>
-			Raid : <?echo date("d/m",$raid->getDate());?> <small>(<a href='raid_period.php?id=<? echo $raidPeriod->getIdRaidPeriod()?>'>Period <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>)</a></small>
+			Raid : <?echo ucfirst(strftime("%A %d/%m",$raid->getDate()));?> <small>(<a href='raid_period.php?id=<? echo $raidPeriod->getIdRaidPeriod()?>'>Period <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>)</a></small>
 		</h1>
 		<div>
 			<select name='raidStatus' <? if(!loginOk()||$raidPeriod->getanalysed())echo 'disabled="true"'?>>
@@ -60,6 +62,7 @@ foreach($inscriptions as $i) {
 				<th><img src='../images/inscription/intime.png'/></th>
 				<th>Status</th>
 				<th>Presence</th>
+				<th>Loot</th>
 			</tr>
 		<?php
 		foreach($inscriptions as $inscriptionIndex => $inscription){
@@ -95,10 +98,31 @@ foreach($inscriptions as $i) {
 				if($rpInscription->hasPlayingStatus()) echo "<img title='$alt' alt='$alt' class='inscriptionInTime' src='../images/inscription/$intimeImg'/>";
 				echo "</span> ";
 			}
-			echo "</div>";
-			echo "</td>";
-			echo "</tr>";
-			
+			?>
+			</div>
+			</td>
+			<td>
+			<?
+			$playerId = $inscription->getPlayer()->getIdPlayer();
+			$raidId = $inscription->getRaid()->getIdRaid();
+			foreach(LootQuery::create()->filterByRaidIdRaid($raidId)->filterByPlayerIdPlayer($playerId)->find() as $loot){
+				$url = $loot->wowheadUrl();
+				echo "<span><a href='$url'>".$loot->getLootName()."</a>";
+				if(loginOk()){
+					$lootName = str_replace("'","\\'",$loot->getLootName());
+					$lootDescription = str_replace("'","\\'",$loot->getComment());
+					echo "(<a href='javascript:lootDialogOpen($playerId,$raidId,".$loot->getIdLoot().",\"$lootName\",\"$lootDescription\")'>Edit</a> ";
+					echo "<a href='../actions/loot.php?delete=true&id=".$loot->getIdLoot()."'>Delete</a>) ";
+				}
+				echo "</span> |";
+			}	
+			?>
+			<?if(loginOk()){?>
+				<a href='javascript:lootDialog(<?echo "$playerId,$raidId"?>);return false;' >Add loot</a>
+			<?}?>
+			</td>
+			</tr>
+			<?
 		}
 		?>
 		</table>

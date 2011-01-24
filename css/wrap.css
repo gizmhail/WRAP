@@ -17,13 +17,57 @@ table.raid  td,table.raidPeriod  td{
 table.raid,table.raidPeriod{
 	border:1px solid grey;
 	border-collapse: collapse;
+	background:white;
 }
 
 div.raidContent{
 	margin-left:10px;
-	margin-bottom:20px;
 }
 
 body{
 	font-family:Arial, Verdana, sans-serif;
+}
+
+legend{
+	border:1 px solid grey;
+	background:#98AFC7;
+	color:white;
+}
+fieldset{
+	background:white;
+	width:310px;
+	margin-bottom:20px;
+}
+body{
+	background:url(../images/old_paper2.jpg) repeat;
+	background-size: 100% 100%;
+	-moz-background-size:100% 100%;
+	-webkit-background-size:100% 100%;
+}
+
+h1{
+	color:white;
+}
+
+a{
+	color:aaaaaa;
+}
+
+table a,fieldset a{
+	color:ff6600;
+}
+
+.raidDescription{
+	min-width:300px;
+	border:1px dashed gray;
+	margin-top:5px;
+	margin-bottom:5px;
+	padding:3px;
+
+
+}
+	
+.raiddescription textarea{
+	width:290px;
+	height:30px;
 }

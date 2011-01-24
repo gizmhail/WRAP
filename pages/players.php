@@ -50,7 +50,7 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		<table class='raidPeriod'>
 			<tr>
 				<th>Player</th>
-				<th><img src='../images/token.png' width='20px'/></th>
+				<td><img src='../images/token.png' width='20px'/></td>
 				<?php
 				foreach($raidByDate as $rd=>$raid) {
 					echo "<td>";
@@ -58,6 +58,7 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 					echo " <div><small>(".$raid->getStatus().")</small></div></td>";
 				}
 				?>
+				<th>Loots</th>
 			</tr>
 		<?php
 		foreach($players as $playerId => $inscriptions){

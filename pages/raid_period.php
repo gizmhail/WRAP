@@ -53,6 +53,8 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 			Raid period : <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>
 			<small>(<a href='raid_periods.php'>Other raids</a>)</small>
 		</h1>
+		<fieldset>
+		<legend>Info</legend>
 		<select name='raidPeriodStatus' <? echo $raidPeriodEditionAuthorisedHtml ?> >
 		<?php
 		foreach($raidPeriod->allStatus() as $existingStatus){
@@ -66,6 +68,7 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		<input type='submit' name='Save' value='Save'<? echo $raidPeriodEditionAuthorisedHtml?> /></h1>
 		<input type='hidden' name='raidPeriodId' value='<?php echo $id?>'/>
 		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
+		</fieldset>
 		<table class='raidPeriod'>
 			<tr>
 				<th>Player</th>
@@ -104,9 +107,9 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		?>
 		</table>
 		</form>
-		<div style='font-size:small'>
-			<h1>Impact if <? echo ($raidPeriod->getAnalysed()?'unsaved':'saved')?></h1>
+		<fieldset style='font-size:small;width:300px;;'>
+			<legend>Impact if <? echo ($raidPeriod->getAnalysed()?'unsaved':'saved')?></legend>
 			<? raidPeriodImpactHtml($raidPeriod,!$raidPeriod->getAnalysed());?>
-		</div>
+		</fieldset>
 	</body>
 </html>

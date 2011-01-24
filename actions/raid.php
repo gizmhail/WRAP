@@ -32,6 +32,10 @@ if($raid->editionAllowed()){
 	}
 }
 
+if(isset($_REQUEST['description'])){
+	$raid->setComment($_REQUEST['description']);
+	$raid->save();
+}
 //Raid status and token impact
 if(isset($_REQUEST['raidStatus'])){
 	$raidStatus = $_REQUEST['raidStatus'];

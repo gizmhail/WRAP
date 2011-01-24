@@ -36,7 +36,8 @@ foreach($inscriptions as $i) {
 		<h1>
 			Raid : <?echo ucfirst(strftime("%A %d/%m",$raid->getDate()));?> <small>(<a href='raid_period.php?id=<? echo $raidPeriod->getIdRaidPeriod()?>'>Period <? echo date("d/m",$raidPeriod->startDate())." - ". date("d/m",$raidPeriod->endDate());?>)</a></small>
 		</h1>
-		<div>
+		<fieldset>
+			<legend>Info</legend>
 			<select name='raidStatus' <? if(!loginOk()||$raidPeriod->getanalysed())echo 'disabled="true"'?>>
 				<?php
 				foreach($raid->allStatus() as $existingStatus){
@@ -48,12 +49,20 @@ foreach($inscriptions as $i) {
 				?>
 			</select>
 			<input type='submit' name='Save' value='Save'<? if(!loginOk()||$raidPeriod->getanalysed())echo 'disabled="true"'?>/></h1>
-		</div>
+			<div class='raidDescription'>
+			<?echo $raid->getComment()?>
+			<?if(loginOk()){?>
+			<textarea name='description' ><? echo $raid->getComment()?></textarea>
+			<?}else{?>
+			<?}?>
+			</div>
+			<div class='raidContent'>
+				Player in raid : <? echo $inRaid;?>
+			</div>
+
+		</fieldset>
 		<input type='hidden' name='raidId' value='<?php echo $id?>'/>
 		<input type='hidden' name='returnUrl' value='<?php echo $currentUrl;?>'/>
-		<div class='raidContent'>
-			Player in raid : <? echo $inRaid;?>
-		</div>
 		<input type='hidden' name='inscriptionCount' value='<?php echo count($inscriptions);?>'/>
 		<table class='raid'>
 			<tr>
@@ -127,9 +136,9 @@ foreach($inscriptions as $i) {
 		?>
 		</table>
 		</form>
-		<div style='font-size:small'>
-			<h1>Impact if <? echo ($raid->getAnalysed()?'unsaved':'saved')?></h1>
+		<fieldset style='font-size:small'>
+			<legend>Impact if <? echo ($raid->getAnalysed()?'unsaved':'saved')?></legend>
 			<? raidImpactHtml($raid,!$raid->getAnalysed());?>
-		</div>
+		</fieldset>
 	</body>
 </html>

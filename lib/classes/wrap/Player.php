@@ -30,6 +30,11 @@ class Player extends BasePlayer {
                 return parent::preSave();
         }
 
+	function getTokenCount(){
+		if($this->getStatus()==PLAYER_STATUS_INACTIVE) return 0;
+		return parent::getTokenCount();
+	}
+
 	function armoryUrl(){
 		global $wowServer;
 		return "http://eu.battle.net/wow/fr/character/".strtolower($wowServer)."/".rawurlencode($this->getPlayerName())."/advanced";

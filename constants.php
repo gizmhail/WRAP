@@ -10,6 +10,7 @@ define('RAID_STATUS_PLANNED','Planned');
 define('RAID_STATUS_CANCELED','Canceled');
 
 define('PLAYER_STATUS_ACTIVE','Active');
+define('PLAYER_STATUS_INACTIVE','Inactive');
 
 define('INSCRIPTION_STATUS_ACCEPTED','Accepted');
 define('INSCRIPTION_STATUS_PASSED','Passed');//Forced to let is seat due to lack of slots

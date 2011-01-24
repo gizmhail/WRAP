@@ -53,13 +53,14 @@ $periods = RaidperiodQuery::create()->find();
 			</tr>
 			<?php
 			foreach($periods as $period){
+				$oldInfo = ($period->endDate()<time())?'oldInfo':'';
 				?>
 			<tr>
-				<td><a href='raid_period.php?id=<?php echo $period->getIdRaidperiod();?>'><?php echo date('d/m',$period->startDate());?> - <?php echo date('d/m',$period->endDate());?></a></td>
+				<td><a class='raidPeriod <? echo $oldInfo?>'href='raid_period.php?id=<?php echo $period->getIdRaidperiod();?>'><?php echo date('d/m',$period->startDate());?> - <?php echo date('d/m',$period->endDate());?></a></td>
 				<td>
 					<?php
 					foreach($period->getRaids() as $raid){
-						echo "<a class='raidCell' href='raid.php?id=".$raid->getIdRaid()."'>".ucfirst(strftime("%a %d",$raid->getDate()))."</a>&nbsp;";
+						echo "<a class='raidCell $oldInfo' href='raid.php?id=".$raid->getIdRaid()."'>".ucfirst(strftime("%a %d",$raid->getDate()))."</a>&nbsp;";
 					}
 					?>
 				</td>

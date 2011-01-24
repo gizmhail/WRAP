@@ -71,3 +71,7 @@ table a,fieldset a{
 	width:290px;
 	height:30px;
 }
+
+.oldInfo{
+	color:gray;
+}

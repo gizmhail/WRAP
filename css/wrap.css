@@ -39,7 +39,7 @@ fieldset{
 	margin-bottom:20px;
 }
 body{
-	background:url(../images/old_paper2.jpg) repeat;
+	background:url(../images/old_paper2.jpg) no-repeat;
 	background-size: 100% 100%;
 	-moz-background-size:100% 100%;
 	-webkit-background-size:100% 100%;

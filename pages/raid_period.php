@@ -103,8 +103,19 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 			}
 			echo "</tr>";
 			
-		}
-		?>
+		}?>
+			<tr>
+				<th>Playing</th>
+				<th></th>
+			<? foreach($raidByDate as $rd=>$raid){
+				$playing = 0;
+				foreach($raid->getRaidHasPlayers() as $inscription){
+					if($inscription->hasPLayingStatus())$playing++;
+				}
+			?>
+				<th><?echo $playing;?></th>
+			<?}?>
+			</tr>
 		</table>
 		</form>
 		<fieldset style='font-size:small;width:300px;;'>

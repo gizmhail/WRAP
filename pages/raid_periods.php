@@ -60,6 +60,7 @@ $periods = RaidperiodQuery::create()->find();
 				<td>
 					<?php
 					foreach($period->getRaids() as $raid){
+						$oldInfo = ($raid->getDate()<time())?'oldInfo':'';
 						echo "<a class='raidCell $oldInfo' href='raid.php?id=".$raid->getIdRaid()."'>".ucfirst(strftime("%a %d",$raid->getDate()))."</a>&nbsp;";
 					}
 					?>
@@ -83,7 +84,12 @@ $periods = RaidperiodQuery::create()->find();
 		<div>		
 		<fieldset>
 			<legend>Armory auto-update</legend>
-		<?include_once("$wrapBaseDir/api/bookmarklet.php");?>
+			<ul>
+				<li>
+				<?include_once("$wrapBaseDir/api/bookmarklet.php");?>
+				</li>
+				<li><a href='logs.php'>Latest changes</a></li>
+			</ul>
 		<?}?>
 
 		</div>

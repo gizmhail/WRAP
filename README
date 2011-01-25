@@ -3,6 +3,8 @@ This software produces a web site to track WoW presence and assist in selectioni
 
 ___________________________________________
 TODO
+Major ----
+* Possibility to add manually players to raid (without armory loading)
 Improvements ---
 * track loot
 * track specialisations

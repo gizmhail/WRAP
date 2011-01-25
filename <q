@@ -30,8 +30,8 @@ function descriptionDialogOpen(raidId,description){
 	$('body').append(
 		"<div id='descriptionpopup'>"
 		+"<form action='../actions/raid.php' method='POST'>"
-		+"<input type='hidden' name='raidId' value='"+raidId+"'/>"
-		+"Description : <textarea style='width:300px;height:200px;' name='description'>"+description+"</textarea>"
+		+"<input type='hidden' name='id' value='"+raidId+"'/>"
+		+"Description : <textarea class='raiddescription' name='description'>"+description+"</textarea>"
 		+"<br/><input type='submit'/>"
 		+"</form>"
 		+"</div>");

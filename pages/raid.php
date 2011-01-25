@@ -13,9 +13,13 @@ $currentUrl = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 $wrapBaseUrl = dirname(dirname($currentUrl));
 
 $inRaid = 0;
+$playing = 0;
 foreach($inscriptions as $i) {
 	if($i->getStatus()==INSCRIPTION_STATUS_TAKEN){
 		$inRaid++;
+	}
+	if($i->hasPlayingStatus()){
+		$playing++;
 	}
 }
 ?>
@@ -52,12 +56,12 @@ foreach($inscriptions as $i) {
 			<div class='raidDescription'>
 			<?echo $raid->getComment()?>
 			<?if(loginOk()){?>
-			<textarea name='description' ><? echo $raid->getComment()?></textarea>
+			<a href='javascript:descriptionDialogOpen(<? echo $raid->getIdRaid();?>,%22<? echo rawurlencode($raid->getComment())?>%22)'> [Edit]</a>
 			<?}else{?>
 			<?}?>
 			</div>
 			<div class='raidContent'>
-				Player in raid : <? echo $inRaid;?>
+				Player in raid : <? echo $inRaid.'/'.$playing;?>
 			</div>
 
 		</fieldset>
@@ -118,9 +122,9 @@ foreach($inscriptions as $i) {
 				$url = $loot->wowheadUrl();
 				echo "<span><a href='$url'>".$loot->getLootName()."</a>";
 				if(loginOk()){
-					$lootName = str_replace("'","\\'",$loot->getLootName());
-					$lootDescription = str_replace("'","\\'",$loot->getComment());
-					echo "(<a href='javascript:lootDialogOpen($playerId,$raidId,".$loot->getIdLoot().",\"$lootName\",\"$lootDescription\")'>Edit</a> ";
+					$lootName = rawurlencode($loot->getLootName());
+					$lootDescription = rawurlencode($loot->getComment());
+					echo "(<a href='javascript:lootDialogOpen($playerId,$raidId,".$loot->getIdLoot().",%22$lootName%22,%22$lootDescription%22)'>Edit</a> ";
 					echo "<a href='../actions/loot.php?delete=true&id=".$loot->getIdLoot()."'>Delete</a>) ";
 				}
 				echo "</span> |";

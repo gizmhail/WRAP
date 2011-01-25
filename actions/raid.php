@@ -1,9 +1,11 @@
 <?php
 
 include "../header.inc.php";
+$returnUrl = isset($_REQUEST['returnUrl'])?$_REQUEST['returnUrl']:$_SERVER['HTTP_REFERER'];
 if(!loginOK()){
-	header("Location:login.php?returnUrl=".rawurlencode($_REQUEST['returnUrl']));
+	header("Location:login.php?returnUrl=".rawurlencode($returnUrl));
 }
+
 
 
 $id = isset($_REQUEST['raidId'])?$_REQUEST['raidId']:false;
@@ -57,7 +59,7 @@ if(isset($_REQUEST['raidStatus'])){
 				<? raidImpactHtml($raid,$raidStatus == RAID_STATUS_DONE)?>
 				<a href='?confirmed=true&<? echo "raidStatus=$raidStatus&raidId=$id&returnUrl=".rawurlencode($_REQUEST['returnUrl']);?>'>Confirm ?</a>
 				<?php
-				unset($_REQUEST['returnUrl']);
+				unset($returnUrl);
 			}else{	
 
 				if($raid->getStatus() == RAID_STATUS_DONE){
@@ -72,6 +74,6 @@ if(isset($_REQUEST['raidStatus'])){
 	}
 }
 
-if(isset($_REQUEST['returnUrl'])){
-	header('Location: '.$_REQUEST['returnUrl']);
+if(isset($returnUrl)){
+	header('Location: '.$returnUrl);
 }

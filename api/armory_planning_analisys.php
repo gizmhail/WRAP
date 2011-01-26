@@ -33,6 +33,7 @@ foreach($planningPushes as $planningPush){
 		exit;
 	}
 	if(!$raid) continue;
+	if($raid->getAnalysed())continue;
 	$previousInscriptions = RaidHasPlayerQuery::create()->filterByRaidIdRaid($raid->getIdRaid())->orderByInscription('desc')->find();
 	$newInscriptions = array();
 	$inscriptions = explode(";",$planningPush['data']);

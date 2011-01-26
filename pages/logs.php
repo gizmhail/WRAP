@@ -19,7 +19,7 @@ header('Content-Type: text/html; charset=utf-8');
 		<ul>
 		<?
 		if(is_file($wrapUpdateLog)){
-			foreach(file($wrapUpdateLog) as $line){
+			foreach(array_reverse(file($wrapUpdateLog)) as $line){
 				$fields = explode(";",$line);
 				list($type,$time) = explode(":",$fields[0]);
 				if($type=="RHP"){

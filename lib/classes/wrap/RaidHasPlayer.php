@@ -74,7 +74,7 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 		//Token priority
 		$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
 		if($playerPriority!=0) return $playerPriority;
-		//Inscription in tme
+		//Inscription in time
 		if($i1->getInscription() && ! $i2->getInscription()) return -1;
 		if($i2->getInscription() && ! $i1->getInscription()) return 1;
 		//Token priority
@@ -85,20 +85,27 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 		$playerInscriptions2 = $i2->getPlayer()->inscriptionForRaidPeriod($i2->getRaid()->getRaidPeriod());
 		//TODO Add depriorisation due to unnoticed absence here
 		$passCount1 = 0;
+		$playedCount1 = 0;
 		$inscriptionInTimeCount1 = 0;
-		$passCount2 = 0;
 		foreach($playerInscriptions1 as $pi){
 			if($pi->getInscription())$inscriptionInTimeCount1++;
 			if($pi->getStatus() == INSCRIPTION_STATUS_PASSED)$passCount1++;
+			if($pi->getStatus() == INSCRIPTION_STATUS_TAKEN)$playedCount1++;
 		}
 		$passCount2 = 0;
 		$inscriptionInTimeCount2 = 0;
+		$playedCount2 = 0;
 		foreach($playerInscriptions2 as $pi){
 			if($pi->getInscription())$inscriptionInTimeCount2++;
 			if($pi->getStatus() == INSCRIPTION_STATUS_PASSED)$passCount2++;
+			if($pi->getStatus() == INSCRIPTION_STATUS_TAKEN)$playedCount2++;
 		}
-		//Had due passed previously during the week
-//echo "$passCount1 $passCount2 $inscriptionInTimeCount1 $inscriptionInTimeCount2<br/>";
+		$inscriptionInTimeCount1 = min($inscriptionInTimeCount1,$wrapRules['InscriptionByWeekExpected']);
+		$inscriptionInTimeCount2 = min($inscriptionInTimeCount2,$wrapRules['InscriptionByWeekExpected']);
+		//One has played enough
+		if(($playedCount1 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount2 >= $wrapRules['InscriptionByWeekExpected'])) return -1; 
+		if(($playedCount2 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount1 >= $wrapRules['InscriptionByWeekExpected'])) return 1; 
+		//Has passed previously during the week
 		if($passCount1 > $passCount2) return -1;
 		if($passCount2 > $passCount1) return 1;
 		//Has minimum number of inscription for raid period?

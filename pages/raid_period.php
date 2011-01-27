@@ -1,8 +1,19 @@
 <?
 include "../header.inc.php";
 $id = isset($_GET['id'])?$_GET['id']:false;
-if($id === false) return;
-$raidPeriod = RaidperiodQuery::create()->filterByIdRaidPeriod($id)->find()->getFirst();
+$raidPeriod = false;
+if($id === false) {
+	$raidPeriods = RaidperiodQuery::create()->find();
+	$now = time();
+	foreach($raidPeriods as $rp){
+		if($rp->startDate() <= $now && $now <= $rp->endDate()){
+			$raidPeriod = $rp;
+		}
+	}
+	if(!$raidPeriod) exit;
+}else{
+	$raidPeriod = RaidperiodQuery::create()->filterByIdRaidPeriod($id)->find()->getFirst();
+}
 
 $raidPeriodEditionAuthorisedHtml = (!loginOk())?'disabled="true"':'';
 

@@ -34,6 +34,9 @@ foreach($inscriptions as $i) {
                 <script type="text/javascript" src="../js/jquery-ui-1.8.8.custom.min.js"></script>
                 <script type="text/javascript" src="../js/wrap.js"></script>
 		<script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
+		<script type="text/javascript">
+			var description="<? echo preg_replace("/\r\n/","\\r\\n",addSlashes($raid->getComment()))?>";
+		</script>
         </head>
         <body>
 		<form method='POST' action='../actions/raid.php'>
@@ -56,7 +59,7 @@ foreach($inscriptions as $i) {
 			<div class='raidDescription'>
 			<?echo $raid->getComment()?>
 			<?if(loginOk()){?>
-			<a href='javascript:descriptionDialogOpen(<? echo $raid->getIdRaid();?>,%22<? echo rawurlencode($raid->getComment())?>%22)'> [Edit]</a>
+			<a href='javascript:descriptionDialogOpen(<? echo $raid->getIdRaid();?>,description)'> [Edit]</a>
 			<?}else{?>
 			<?}?>
 			</div>

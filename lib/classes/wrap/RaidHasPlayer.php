@@ -59,31 +59,9 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 	}
 
 	static function sortByPriority($i1,$i2){
-		global $wrapRules;
-		//For presentation purposes: Taken is displayed first
-		if($i1->getStatus() == INSCRIPTION_STATUS_TAKEN && $i2->getStatus != INSCRIPTION_STATUS_TAKEN) return -1;
-		if($i2->getStatus() == INSCRIPTION_STATUS_TAKEN && $i1->getStatus != INSCRIPTION_STATUS_TAKEN) return 1;
-		//If confirmed, use rules to know if it is more important than tokens
-		if($wrapRules['ConfirmedAreTakenFirst']){
-			if($i1->getStatus() == INSCRIPTION_STATUS_CONFIRMED && $i2->getStatus != INSCRIPTION_STATUS_CONFIRMED) return -1;
-			if($i2->getStatus() == INSCRIPTION_STATUS_CONFIRMED && $i1->getStatus != INSCRIPTION_STATUS_CONFIRMED) return 1;
-		}
-		//Is playing ?
-		if($i1->hasPlayingStatus() && ! $i2->hasPlayingStatus()) return -1;
-		if($i2->hasPlayingStatus() && ! $i1->hasPlayingStatus()) return 1;
-		//Token priority
-		$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
-		if($playerPriority!=0) return $playerPriority;
-		//Inscription in time
-		if($i1->getInscription() && ! $i2->getInscription()) return -1;
-		if($i2->getInscription() && ! $i1->getInscription()) return 1;
-		//Token priority
-		$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
-		if($playerPriority!=0) return $playerPriority;
 		//Week period analisys
 		$playerInscriptions1 = $i1->getPlayer()->inscriptionForRaidPeriod($i1->getRaid()->getRaidPeriod());
 		$playerInscriptions2 = $i2->getPlayer()->inscriptionForRaidPeriod($i2->getRaid()->getRaidPeriod());
-		//TODO Add depriorisation due to unnoticed absence here
 		$passCount1 = 0;
 		$playedCount1 = 0;
 		$inscriptionInTimeCount1 = 0;
@@ -101,16 +79,69 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 			if($pi->getStatus() == INSCRIPTION_STATUS_TAKEN)$playedCount2++;
 		}
 		$inscriptionInTimeCount1 = min($inscriptionInTimeCount1,$wrapRules['InscriptionByWeekExpected']);
-		$inscriptionInTimeCount2 = min($inscriptionInTimeCount2,$wrapRules['InscriptionByWeekExpected']);
-		//One has played enough
-		if(($playedCount1 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount2 >= $wrapRules['InscriptionByWeekExpected'])) return -1; 
-		if(($playedCount2 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount1 >= $wrapRules['InscriptionByWeekExpected'])) return 1; 
-		//Has passed previously during the week
-		if($passCount1 > $passCount2) return -1;
-		if($passCount2 > $passCount1) return 1;
-		//Has minimum number of inscription for raid period?
-		if($inscriptionInTimeCount1 > $inscriptionInTimeCount2) return -1;
-		if($inscriptionInTimeCount2 > $inscriptionInTimeCount1) return 1;
+		$inscriptionInTimeCount2 = min($inscriptionInTimeCount2,$wrapRules['InscriptionByWeekExpected']);	global $wrapRules;
+
+		foreach($wrapRules["prioritysortOrder"] as $prioritysortOrder){
+			//echo $i1->getPlayer()->getPlayerName()."/".$i2->getPlayer()->getPlayerName().$prioritysortOrder."<br/>";
+			switch($prioritysortOrder){
+			case "PRIORITY_TAKEN":	
+				//For presentation purposes: Taken is displayed first
+				if($i1->getStatus() == INSCRIPTION_STATUS_TAKEN && $i2->getStatus != INSCRIPTION_STATUS_TAKEN) return -1;
+				if($i2->getStatus() == INSCRIPTION_STATUS_TAKEN && $i1->getStatus != INSCRIPTION_STATUS_TAKEN) return 1;
+				break;
+			case "PRIORITY_CONFIRMED":
+				if($i1->getStatus() == INSCRIPTION_STATUS_CONFIRMED && $i2->getStatus != INSCRIPTION_STATUS_CONFIRMED) return -1;
+				if($i2->getStatus() == INSCRIPTION_STATUS_CONFIRMED && $i1->getStatus != INSCRIPTION_STATUS_CONFIRMED) return 1;
+				break;
+			case "PRIORITY_UNCERTAIN":
+				if($i1->getStatus() == INSCRIPTION_STATUS_UNCERTAIN && $i2->getStatus != INSCRIPTION_STATUS_UNCERTAIN) return -1;
+				if($i2->getStatus() == INSCRIPTION_STATUS_UNCERTAIN && $i1->getStatus != INSCRIPTION_STATUS_UNCERTAIN) return 1;
+				break;
+			case "PRIORITY_PASSED":
+				if($i1->getStatus() == INSCRIPTION_STATUS_PASSED && $i2->getStatus != INSCRIPTION_STATUS_PASSED) return -1;
+				if($i2->getStatus() == INSCRIPTION_STATUS_PASSED && $i1->getStatus != INSCRIPTION_STATUS_PASSED) return 1;
+				break;
+
+			case "PRIORITY_ISPLAYING":
+				//Is playing ?
+				if($i1->hasPlayingStatus() && ! $i2->hasPlayingStatus()) return -1;
+				if($i2->hasPlayingStatus() && ! $i1->hasPlayingStatus()) return 1;
+				break;
+				//Token priority
+				$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
+				if($playerPriority!=0) return $playerPriority;
+				break;
+			case "PRIORITY_INSCRIPTIONINTIME":
+				//Inscription in time
+				if($i1->getInscription() && ! $i2->getInscription()) return -1;
+				if($i2->getInscription() && ! $i1->getInscription()) return 1;
+				break;
+			case "PRIORITY_TOKEN":
+				//Token priority
+				$playerPriority = Player::sortByPriority($i1->getPlayer(),$i2->getPlayer());
+				if($playerPriority!=0) return $playerPriority;
+				break;
+			case "PRIORITY_LESSUNNOTICEDANSENCE":
+				//TODO Add depriorisation due to unnoticed absence here
+				break;
+
+			case "PRORITY_WEEK_PLAYEDENOUGH":
+				//One has played enough
+				if(($playedCount1 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount2 >= $wrapRules['InscriptionByWeekExpected'])) return -1; 
+				if(($playedCount2 < $wrapRules['InscriptionByWeekExpected']) && ($playedCount1 >= $wrapRules['InscriptionByWeekExpected'])) return 1; 
+				break;
+			case "PRORITY_WEEK_PASSED":
+				//Has passed previously during the week
+				if($passCount1 > $passCount2) return -1;
+				if($passCount2 > $passCount1) return 1;
+				break;
+			case "PRORITY_WEEK_MINIMUMNUMBEROFINSCRIPTION":
+				//Has minimum number of inscription for raid period?
+				if($inscriptionInTimeCount1 > $inscriptionInTimeCount2) return -1;
+				if($inscriptionInTimeCount2 > $inscriptionInTimeCount1) return 1;
+				break;
+			}
+		}
 		return 0;
 	}
 

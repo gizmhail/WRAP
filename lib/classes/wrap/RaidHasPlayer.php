@@ -55,6 +55,9 @@ class RaidHasPlayer extends BaseRaidHasPlayer {
 		if($this->getStatus() == INSCRIPTION_STATUS_MISING){
 			$impact = -$wrapRules['RaidSlotTokenPrice'];
 		}
+		if($this->getStatus() == INSCRIPTION_STATUS_PASSED){
+			$impact = $wrapRules['RaidPassedTokenGift'];
+		}
 		return $impact;
 	}
 

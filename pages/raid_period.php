@@ -5,10 +5,21 @@ $raidPeriod = false;
 if($id === false) {
 	$raidPeriods = RaidperiodQuery::create()->find();
 	$now = time();
+	$closestPeriod = false;
 	foreach($raidPeriods as $rp){
 		if($rp->startDate() <= $now && $now <= $rp->endDate()){
 			$raidPeriod = $rp;
+		}else if(($raidPeriod == false) && ($rp->startDate() > $now)){
+			if($closestPeriod == false){
+				$closestPeriod = $rp;
+			}else if($rp->startDate() < $closestPeriod->startDate()){
+				$closestPeriod = $rp;
+			}
 		}
+		if($raidPeriod == false && $closestPeriod != false){
+			$raidPeriod = $closestPeriod;
+		}
+		
 	}
 	if(!$raidPeriod) exit;
 }else{
